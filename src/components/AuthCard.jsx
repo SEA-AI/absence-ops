@@ -17,7 +17,7 @@ export function AuthCard({ onLogin, loading }) {
       <div className="glass auth-card animate-fade">
         <div className="auth-header">
           <Terminal size={32} className="logo-icon" />
-          <h2>Absence Batch</h2>
+          <h2>Absence Ops</h2>
           <p>Login with your OAuth Credentials</p>
         </div>
 
