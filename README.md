@@ -15,4 +15,4 @@ A tool to manage and track **labelled hours** in **absence.io**. Use it to assig
 4. **Connect**: Enter your keys in the app. They are stored only in your browser (local storage).
 
 ## Deployment
-Built for **GitHub Pages**. Pushing to `main` will automatically build and deploy the site using the included GitHub Actions workflow.
+Built for **GitHub Pages**. Pushing to `develop` will automatically build and deploy the site using the included GitHub Actions workflow.
