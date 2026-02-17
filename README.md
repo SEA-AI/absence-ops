@@ -1,8 +1,6 @@
 # Absence Ops
 
-Operational efficiency tool for [absence.io](https://absence.io).
-
-**[🚀 Live App](https://sea-ai.github.io/absence-ops/)**
+[![Live App](https://img.shields.io/badge/🚀%20Live%20App-brightgreen?style=for-the-badge)](https://sea-ai.github.io/absence-ops/)
 
 ---
 
@@ -26,7 +24,7 @@ npm install && npm run dev
 ```
 
 ### Deployment
-Built for **GitHub Pages**. Pushing to `develop` will automatically build and deploy the site using the included GitHub Actions workflow.
+Built for **GitHub Pages**. Pushing to `develop` will automatically build and deploy the site.
 
 ---
 *Built for fast, surgical time tracking.*
