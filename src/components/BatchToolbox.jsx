@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Tag, CheckCircle2, AlertCircle, X, ChevronUp, Layers } from 'lucide-react';
+import { Tag, CheckCircle2, AlertCircle, X, ChevronUp, Layers, Trash2 } from 'lucide-react';
 
-export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onApply, processing, results }) {
+export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onApply, onClear, processing, results }) {
   const [selectedLabelId, setSelectedLabelId] = useState('');
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -71,8 +71,17 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
                     {processing ? (
                       <div className="loader" />
                     ) : (
-                      'Apply to Selection'
+                      'Apply'
                     )}
+                  </button>
+                  <div className="divider" />
+                  <button
+                    className="danger-action"
+                    onClick={onClear}
+                    disabled={processing || selectedCount === 0}
+                    title="Clear all labels"
+                  >
+                    <Trash2 size={16} />
                   </button>
                 </div>
               </>
@@ -142,7 +151,7 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
         .select-wrapper {
           position: relative;
           flex: 1;
-          min-width: 180px;
+          min-width: 140px;
         }
         .select-wrapper .input-icon {
           position: absolute;
@@ -165,7 +174,7 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
         .primary-action {
           background: var(--text-primary);
           color: var(--bg-main);
-          padding: 8px 20px;
+          padding: 8px 16px;
           border-radius: 16px;
           font-size: 13px;
           font-weight: 600;
@@ -178,7 +187,24 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
           filter: brightness(0.9);
           transform: translateY(-1px);
         }
-        .primary-action:disabled {
+        .danger-action {
+          background: rgba(233, 80, 80, 0.1);
+          color: var(--danger);
+          padding: 8px;
+          border-radius: 12px;
+          border: 1px solid rgba(233, 80, 80, 0.2);
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.2s;
+        }
+        .danger-action:hover:not(:disabled) {
+          background: var(--danger);
+          color: white;
+          transform: translateY(-1px);
+        }
+        .primary-action:disabled, .danger-action:disabled {
           opacity: 0.5;
           cursor: not-allowed;
         }

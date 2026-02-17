@@ -233,6 +233,28 @@ function App() {
     }
   };
 
+  const handleBatchClear = async () => {
+    // Flatten selected IDs if they are groups, and strictly filter for 'work' type
+    const targetIds = processedEvents
+      .filter(e => selectedIds.includes(e._id))
+      .flatMap(e => e.isGroup ? e.ids : (e.type === 'work' ? [e._id] : []));
+
+    if (targetIds.length === 0) return;
+
+    if (!confirm(`Are you sure you want to clear labels from ${targetIds.length} items?`)) return;
+
+    setProcessing(true);
+    try {
+      const results = await absenceApi.batchUpdateLabels(auth, targetIds, []);
+      setBulkResults(results);
+      await fetchData(); // Refresh table
+    } catch (err) {
+      alert('Batch clear failed: ' + err.message);
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   if (!auth) {
     return <AuthCard onLogin={handleLogin} />;
   }
@@ -285,6 +307,7 @@ function App() {
         selectedTotalDuration={selectedTotalDuration}
         labels={labels}
         onApply={handleBatchApply}
+        onClear={handleBatchClear}
         processing={processing}
         results={bulkResults}
       />
