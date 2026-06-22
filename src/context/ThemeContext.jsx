@@ -2,41 +2,20 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
+// SEA.AI product themes (frontend.md): DARK default, LIGHT daytime, NIGHT bridge.
+export const THEMES = ['DARK', 'LIGHT', 'NIGHT'];
+
 export function ThemeProvider({ children }) {
     const [theme, setTheme] = useState(() => {
-        return localStorage.getItem('theme') || 'dark';
+        const saved = localStorage.getItem('theme');
+        return THEMES.includes(saved) ? saved : 'DARK';
     });
 
     useEffect(() => {
         const root = window.document.documentElement;
-
-        const applyTheme = (t) => {
-            root.classList.remove('light-theme', 'dark-theme');
-            let themeToApply = t;
-
-            if (t === 'system') {
-                const mq = window.matchMedia('(prefers-color-scheme: dark)');
-                themeToApply = mq.matches ? 'dark' : 'light';
-                console.log(`[Theme] System preference detected: ${themeToApply} (matches: ${mq.matches})`);
-            }
-
-            const themeClass = `${themeToApply}-theme`;
-            root.classList.add(themeClass);
-            root.style.colorScheme = themeToApply;
-            console.log(`[Theme] Applied ${themeClass} to documentRoot`);
-        };
-
-        applyTheme(theme);
+        root.setAttribute('data-theme', theme);
+        root.style.colorScheme = theme === 'LIGHT' ? 'light' : 'dark';
         localStorage.setItem('theme', theme);
-
-        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-        const handleChange = () => {
-            console.log('[Theme] System theme change detected');
-            if (theme === 'system') applyTheme('system');
-        };
-
-        mediaQuery.addEventListener('change', handleChange);
-        return () => mediaQuery.removeEventListener('change', handleChange);
     }, [theme]);
 
     return (

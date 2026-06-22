@@ -17,7 +17,7 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
 
   return (
     <div className={`batch-toolbox-wrapper ${!isExpanded ? 'collapsed' : ''}`}>
-      <div className="glass batch-toolbox-island animate-pop">
+      <div className="batch-toolbox-island">
         {results ? (
           <div className="results-container">
             <div className="res-content">
@@ -106,132 +106,126 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
         __html: `
         .batch-toolbox-wrapper {
           position: fixed;
-          bottom: 40px;
+          bottom: 28px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 1000;
-          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
+        /* elevated surface — depth from value, not shadow/blur */
         .batch-toolbox-island {
-          min-width: 320px;
-          padding: 8px;
-          border-radius: 24px;
-          border: 1px solid var(--glass-border);
-          box-shadow: var(--shadow);
-          background: var(--glass-bg);
-          backdrop-filter: blur(20px);
+          min-width: 340px;
+          padding: var(--space-s);
+          border-radius: var(--radius-l);
+          background: var(--surface-neutral-5);
         }
         .action-container {
           display: flex;
           align-items: center;
-          gap: 12px;
-          padding: 4px;
+          gap: var(--space-m);
+          padding: var(--space-xs);
         }
         .toolbox-info {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: var(--space-s);
           cursor: pointer;
           user-select: none;
         }
+        /* selection count = active state → primary blue */
         .selection-pill {
-          background: var(--primary);
-          color: white;
-          padding: 8px 16px;
-          border-radius: 18px;
+          background: var(--surface-primary-3);
+          color: #FFFFFF;
+          padding: 8px 14px;
+          border-radius: var(--radius-m);
           font-size: 13px;
-          font-weight: 700;
+          font-weight: 600;
           display: flex;
           align-items: center;
-          gap: 8px;
-          transition: transform 0.2s;
-        }
-        .selection-pill:hover {
-          transform: scale(1.02);
+          gap: var(--space-s);
+          white-space: nowrap;
+          font-variant-numeric: tabular-nums;
         }
         .divider {
           width: 1px;
           height: 24px;
-          background: var(--glass-border);
+          background: var(--surface-neutral-3);
         }
         .control-group {
           display: flex;
           align-items: center;
-          gap: 12px;
+          gap: var(--space-m);
           flex: 1;
         }
         .select-wrapper {
           position: relative;
           flex: 1;
-          min-width: 140px;
+          min-width: 150px;
         }
         .select-wrapper .input-icon {
           position: absolute;
           left: 12px;
           top: 50%;
           transform: translateY(-50%);
-          color: var(--text-secondary);
+          color: var(--content-neutral-1);
           pointer-events: none;
         }
         .select-wrapper select {
           width: 100%;
-          padding: 8px 12px 8px 36px;
-          background: var(--bg-navy);
-          border: 1px solid var(--glass-border);
-          border-radius: 16px;
-          color: var(--text-primary);
+          height: 40px;
+          padding: 0 12px 0 36px;
+          background: var(--surface-neutral-3);
+          border: none;
+          border-radius: var(--radius-m);
+          color: var(--content-neutral-3);
           font-size: 13px;
           appearance: none;
         }
         .primary-action {
-          background: var(--primary);
+          background: var(--surface-primary-3);
           color: #FFFFFF;
-          padding: 8px 16px;
-          border-radius: 16px;
+          height: 40px;
+          padding: 0 16px;
+          border-radius: var(--radius-m);
           font-size: 13px;
           font-weight: 600;
           border: none;
           cursor: pointer;
-          transition: all 0.2s;
+          transition: filter var(--transition);
           white-space: nowrap;
+          min-width: 72px;
         }
-        .primary-action:hover:not(:disabled) {
-          filter: brightness(0.9);
-          transform: translateY(-1px);
-        }
+        .primary-action:hover:not(:disabled) { filter: brightness(1.12); }
+        /* destructive = danger red */
         .danger-action {
-          background: rgba(233, 80, 80, 0.1);
-          color: var(--danger);
-          padding: 8px;
-          border-radius: 12px;
-          border: 1px solid rgba(233, 80, 80, 0.2);
+          background: transparent;
+          color: var(--content-danger-1);
+          height: 40px;
+          width: 40px;
+          border-radius: var(--radius-m);
+          border: none;
           cursor: pointer;
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: all 0.2s;
+          transition: background var(--transition), color var(--transition);
         }
         .danger-action:hover:not(:disabled) {
-          background: var(--danger);
-          color: white;
-          transform: translateY(-1px);
+          background: var(--surface-danger-3);
+          color: #FFFFFF;
         }
         .primary-action:disabled, .danger-action:disabled {
-          opacity: 0.5;
+          opacity: var(--opacity-disabled);
           cursor: not-allowed;
         }
-        
+
         /* Results View */
         .results-container {
           display: flex;
           align-items: center;
-          gap: 16px;
-          padding: 4px 12px;
+          gap: var(--space-l);
+          padding: var(--space-xs) var(--space-m);
         }
-        .res-content {
-          display: flex;
-          gap: 12px;
-        }
+        .res-content { display: flex; gap: var(--space-m); }
         .status-badge {
           display: flex;
           align-items: center;
@@ -239,81 +233,73 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
           font-size: 13px;
           font-weight: 600;
           padding: 6px 12px;
-          border-radius: 12px;
+          border-radius: var(--radius-m);
         }
         .status-badge.success {
-          background: var(--secondary-dim);
-          color: var(--success-text);
+          background: var(--surface-neutral-3);
+          color: var(--content-neutral-2);
         }
         .status-badge.error {
-          background: var(--primary-dim);
-          color: var(--danger);
+          background: var(--surface-danger-3);
+          color: #FFFFFF;
         }
         .close-btn {
-          background: var(--glass-bg);
-          border: 1px solid var(--glass-border);
-          color: var(--text-secondary);
-          padding: 6px;
-          border-radius: 50%;
+          background: var(--surface-neutral-3);
+          border: none;
+          color: var(--content-neutral-2);
+          width: 32px;
+          height: 32px;
+          border-radius: var(--radius-m);
           cursor: pointer;
           display: flex;
-          transition: all 0.2s;
+          align-items: center;
+          justify-content: center;
+          transition: background var(--transition), color var(--transition);
         }
         .close-btn:hover {
-          background: var(--glass-border);
-          color: var(--text-primary);
+          background: var(--surface-neutral-4);
+          color: var(--content-neutral-3);
         }
 
-        .close-btn:hover {
-          background: var(--glass-border);
-          color: var(--text-primary);
-        }
-
-        .animate-pop {
-          animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes pop {
-          from { transform: scale(0.9) translateY(20px); opacity: 0; }
-          to { transform: scale(1) translateY(0); opacity: 1; }
-        }
-        
         .loader {
           width: 16px;
           height: 16px;
-          border: 2px solid var(--text-secondary);
-          border-top-color: var(--bg-main);
+          border: 2px solid rgba(255,255,255,0.35);
+          border-top-color: #FFFFFF;
           border-radius: 50%;
           animation: spin 0.8s linear infinite;
         }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
         .progress-container {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex: 1;
+          display: flex;
+          align-items: center;
+          gap: var(--space-s);
+          flex: 1;
+          min-width: 120px;
         }
         .progress-track {
-            flex: 1;
-            height: 4px;
-            background: var(--glass-border);
-            border-radius: 2px;
-            overflow: hidden;
+          flex: 1;
+          height: 8px;
+          background: var(--surface-neutral-3);
+          border-radius: var(--radius-s);
+          overflow: hidden;
         }
         .progress-fill-bar {
-            height: 100%;
-            background: var(--primary);
-            border-radius: 2px;
-            transition: width 0.3s ease;
+          height: 100%;
+          background: var(--surface-primary-3);
+          border-radius: var(--radius-s);
+          transition: width 0.4s ease-in-out;
+          min-width: 4px;
         }
         .progress-label {
-            font-size: 11px;
-            color: var(--text-secondary);
-            white-space: nowrap;
-            font-weight: 600;
-            min-width: 36px;
-            text-align: right;
+          font-size: 12px;
+          color: var(--content-neutral-2);
+          white-space: nowrap;
+          font-weight: 600;
+          min-width: 38px;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
         }
       `}} />
     </div>

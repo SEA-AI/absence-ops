@@ -6,29 +6,28 @@ import { FilterBar } from './components/FilterBar';
 import { EventTable } from './components/EventTable';
 import { BatchToolbox } from './components/BatchToolbox';
 import { StatsDashboard } from './components/StatsDashboard';
-import { LogOut, LayoutDashboard, Database, Sun, Moon, Laptop, CalendarDays, List } from 'lucide-react';
-import { useTheme } from './context/ThemeContext';
+import { LogOut, Database, Sun, Moon, MoonStar, CalendarDays, List } from 'lucide-react';
+import { useTheme, THEMES } from './context/ThemeContext';
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   const cycleTheme = () => {
-    if (theme === 'system') setTheme('light');
-    else if (theme === 'light') setTheme('dark');
-    else setTheme('system');
+    const next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    setTheme(next);
   };
 
   const getIcon = () => {
-    if (theme === 'light') return <Sun size={18} />;
-    if (theme === 'dark') return <Moon size={18} />;
-    return <Laptop size={18} />;
+    if (theme === 'LIGHT') return <Sun size={18} />;
+    if (theme === 'DARK') return <Moon size={18} />;
+    return <MoonStar size={18} />;
   };
 
   return (
     <button
       className="secondary theme-toggle-btn"
       onClick={cycleTheme}
-      title={`Theme: ${theme}`}
+      title={`Theme: ${theme} (click to cycle)`}
     >
       {getIcon()}
     </button>
@@ -283,10 +282,10 @@ function App() {
         <div className="header-right">
           <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
           <ThemeToggle />
-          <div className="api-status">
-            <Database size={14} />
+          <span className="pill pill--ok">
+            <span className="pill-dot" />
             Connected
-          </div>
+          </span>
           <button className="secondary logout-btn" onClick={handleLogout}>
             <LogOut size={15} />
             Logout
@@ -332,124 +331,87 @@ function App() {
         .dashboard {
           max-width: 1600px;
           margin: 0 auto;
-          padding: var(--spacing-md);
+          padding: var(--space-l);
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: var(--space-s);
           height: 100vh;
         }
 
-        /* ── SEA.AI Header ── */
+        /* ── Header (flat panel) ── */
         .sea-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: 10px var(--spacing-md);
-          background: #0B1731;
-          border-radius: var(--radius-md);
-          border: none;
+          padding: 0 var(--space-l);
+          height: 56px;
+          background: var(--surface-neutral-3);
+          border-radius: var(--radius-m);
         }
-        .sea-brand {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
+        .sea-brand { display: flex; align-items: center; gap: var(--space-m); }
         .sea-mark {
-          font-size: 0.75rem;
-          font-weight: 700;
-          letter-spacing: 0.25em;
-          color: #CB0D00;
+          font-size: 0.78rem;
+          font-weight: 600;
+          letter-spacing: 0.24em;
+          color: var(--content-neutral-3);
           text-transform: uppercase;
         }
         .sea-divider {
           width: 1px;
           height: 18px;
-          background: rgba(123, 145, 148, 0.3);
+          background: var(--surface-neutral-5);
         }
         .sea-product {
           font-size: 1rem;
           font-weight: 400;
-          color: rgba(255,255,255,0.7);
-          letter-spacing: 0.02em;
+          color: var(--content-neutral-1);
+          letter-spacing: 0.01em;
         }
-        .sea-product strong {
-          color: #FFFFFF;
-          font-weight: 700;
-        }
-        .header-right {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        .api-status {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 0.8rem;
-          font-weight: 600;
-          color: #7B9194;
-          background: rgba(6, 64, 76, 0.35);
-          padding: 5px 12px;
-          border-radius: 20px;
-          border: 1px solid rgba(123, 145, 148, 0.2);
-        }
-        .logout-btn {
-          background: rgba(255,255,255,0.06) !important;
-          border-color: rgba(255,255,255,0.1) !important;
-          color: rgba(255,255,255,0.7) !important;
-          font-size: 0.82rem;
-        }
-        .logout-btn:hover:not(:disabled) {
-          background: rgba(203, 13, 0, 0.15) !important;
-          border-color: rgba(203, 13, 0, 0.3) !important;
-          color: #CB0D00 !important;
-        }
+        .sea-product strong { color: var(--content-neutral-3); font-weight: 600; }
+
+        .header-right { display: flex; align-items: center; gap: var(--space-s); }
+        .logout-btn { font-size: 0.85rem; }
 
         main {
           flex: 1;
           display: flex;
           flex-direction: column;
-          gap: 10px;
+          gap: var(--space-s);
           overflow: hidden;
         }
-        .main-controls {
-          flex-shrink: 0;
-        }
+        .main-controls { flex-shrink: 0; }
+
+        /* ── Theme toggle ── */
         .theme-toggle-btn {
-          padding: 7px !important;
-          border-radius: 8px !important;
-          background: rgba(255,255,255,0.06) !important;
-          border-color: rgba(255,255,255,0.1) !important;
-          color: rgba(255,255,255,0.6) !important;
+          width: 40px;
+          padding: 0 !important;
+          color: var(--content-neutral-2) !important;
         }
-        .theme-toggle-btn:hover:not(:disabled) {
-          background: rgba(255,255,255,0.12) !important;
-          color: rgba(255,255,255,0.9) !important;
-        }
+
+        /* ── View toggle (segmented, blue = active) ── */
         .discrete-view-toggle {
           display: flex;
-          background: rgba(255,255,255,0.06);
+          background: var(--surface-neutral-4);
           padding: 3px;
-          border-radius: 8px;
-          gap: 2px;
-          border: 1px solid rgba(255,255,255,0.1);
+          border-radius: var(--radius-m);
+          gap: 3px;
         }
         .view-btn {
-          padding: 5px 7px;
-          border-radius: 5px;
+          width: 34px;
+          height: 34px;
+          border-radius: var(--radius-s);
           background: transparent;
-          color: rgba(255,255,255,0.5);
+          color: var(--content-neutral-1);
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: var(--transition);
         }
         .view-btn:hover:not(.active) {
-          background: rgba(255,255,255,0.08);
-          color: rgba(255,255,255,0.8);
+          background: var(--surface-neutral-5);
+          color: var(--content-neutral-2);
         }
         .view-btn.active {
-          background: #CB0D00;
+          background: var(--surface-primary-3);
           color: #FFFFFF;
         }
       `}} />

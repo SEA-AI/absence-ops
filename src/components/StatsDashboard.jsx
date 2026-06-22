@@ -16,7 +16,7 @@ export function StatsDashboard({ stats, labels }) {
   };
 
   return (
-    <div className="stats-dashboard animate-fade">
+    <div className="stats-dashboard">
       <div className="stats-total">
         <Clock size={13} className="stat-icon-inline" />
         <span className="stat-label-text">TOTAL</span>
@@ -53,41 +53,42 @@ export function StatsDashboard({ stats, labels }) {
         .stats-dashboard {
           display: flex;
           align-items: center;
-          gap: 24px;
-          padding: 8px 16px;
-          border-bottom: 1px solid var(--glass-border);
+          gap: var(--space-2xl);
+          padding: var(--space-m) var(--space-l);
+          background: var(--surface-neutral-3);
+          border-radius: var(--radius-m);
           flex-shrink: 0;
         }
         .stats-total {
           display: flex;
           align-items: center;
-          gap: 7px;
+          gap: var(--space-s);
           flex-shrink: 0;
           white-space: nowrap;
         }
         .stat-icon-inline {
-          color: var(--primary);
+          color: var(--content-neutral-1);
         }
         .stat-label-text {
           font-size: 0.68rem;
-          font-weight: 700;
+          font-weight: 500;
           text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: var(--primary);
+          letter-spacing: 0.06em;
+          color: var(--content-neutral-1);
         }
         .stat-value-main {
-          font-size: 1.15rem;
-          font-weight: 700;
-          color: var(--text-primary);
+          font-size: 1.2rem;
+          font-weight: 600;
+          color: var(--content-neutral-3);
           font-variant-numeric: tabular-nums;
         }
         .stat-days {
           font-size: 0.72rem;
-          color: var(--muted);
-          padding: 2px 6px;
-          background: var(--glass-border);
-          border-radius: 3px;
-          font-weight: 600;
+          color: var(--content-neutral-2);
+          padding: 2px 7px;
+          background: var(--surface-neutral-5);
+          border-radius: var(--radius-s);
+          font-weight: 500;
         }
 
         /* Label strip */
@@ -122,34 +123,33 @@ export function StatsDashboard({ stats, labels }) {
           gap: 6px;
         }
         .label-stat-name {
-          font-size: 0.78rem;
-          font-weight: 600;
-          color: var(--text-secondary);
+          font-size: 0.7rem;
+          font-weight: 500;
+          color: var(--content-neutral-1);
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
           text-transform: uppercase;
           letter-spacing: 0.03em;
-          font-size: 0.7rem;
         }
         .label-stat-dur {
           font-size: 0.82rem;
-          font-weight: 700;
-          color: var(--text-primary);
+          font-weight: 600;
+          color: var(--content-neutral-3);
           white-space: nowrap;
           font-variant-numeric: tabular-nums;
         }
         .label-stat-bar {
           width: 100%;
-          height: 2px;
-          background: var(--glass-border);
-          border-radius: 1px;
+          height: 3px;
+          background: var(--surface-neutral-5);
+          border-radius: var(--radius-xs);
           overflow: hidden;
         }
         .label-stat-fill {
           height: 100%;
-          background: var(--primary);
-          border-radius: 1px;
+          background: var(--content-neutral-2);
+          border-radius: var(--radius-xs);
           min-width: 2px;
         }
 

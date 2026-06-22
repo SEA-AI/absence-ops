@@ -16,7 +16,7 @@ export function FilterBar({ startDate, endDate, onDateChange, onRefresh, loading
   };
 
   return (
-    <div className="filter-bar glass">
+    <div className="filter-bar">
       <div className="range-presets">
         <button className="secondary sm" onClick={() => setQuickRange('today')}>Today</button>
         <button className="secondary sm" onClick={() => setQuickRange('7d')}>Last 7d</button>
@@ -57,20 +57,21 @@ export function FilterBar({ startDate, endDate, onDateChange, onRefresh, loading
           display: flex;
           align-items: center;
           justify-content: space-between;
-          padding: 12px var(--spacing-md);
-          border-radius: var(--radius-md);
-          gap: var(--spacing-sm);
+          padding: var(--space-m) var(--space-l);
+          border-radius: var(--radius-m);
+          gap: var(--space-m);
           flex-wrap: wrap;
+          background: var(--surface-neutral-3);
         }
         .range-presets {
           display: flex;
           flex-wrap: wrap;
-          gap: 6px;
+          gap: var(--space-s);
         }
         .date-inputs {
           display: flex;
           align-items: center;
-          gap: 8px;
+          gap: var(--space-s);
         }
         .input-group {
           position: relative;
@@ -79,19 +80,20 @@ export function FilterBar({ startDate, endDate, onDateChange, onRefresh, loading
         }
         .date-icon {
           position: absolute;
-          left: 10px;
-          color: var(--muted);
+          left: 12px;
+          color: var(--content-neutral-1);
           pointer-events: none;
           z-index: 1;
         }
         .input-group input[type="date"] {
-          padding: 7px 10px 7px 30px;
+          padding: 0 var(--space-m) 0 34px;
+          height: 40px;
           font-size: 0.88rem;
           cursor: pointer;
-          background: var(--bg-secondary, var(--glass-bg));
-          border: 1px solid var(--glass-border);
-          border-radius: var(--radius-sm);
-          color: var(--text-primary);
+          background: var(--surface-neutral-4);
+          border: none;
+          border-radius: var(--radius-s);
+          color: var(--content-neutral-3);
           font-family: inherit;
           letter-spacing: 0.01em;
         }
@@ -105,7 +107,7 @@ export function FilterBar({ startDate, endDate, onDateChange, onRefresh, loading
           cursor: pointer;
         }
         .arrow {
-          color: var(--muted);
+          color: var(--content-neutral-1);
           flex-shrink: 0;
         }
         .spin {
@@ -119,7 +121,7 @@ export function FilterBar({ startDate, endDate, onDateChange, onRefresh, loading
           .filter-bar {
             flex-direction: column;
             align-items: stretch;
-            gap: 10px;
+            gap: var(--space-m);
           }
           .range-presets { justify-content: center; }
           .date-inputs { justify-content: center; }

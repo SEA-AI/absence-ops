@@ -14,7 +14,7 @@ export function AuthCard({ onLogin, loading }) {
 
   return (
     <div className="auth-container">
-      <div className="auth-card animate-fade">
+      <div className="auth-card">
         <div className="auth-header">
           <div className="sea-logo-mark">S E A . A I</div>
           <div className="auth-product-name">Absence <strong>Ops</strong></div>
@@ -82,48 +82,41 @@ export function AuthCard({ onLogin, loading }) {
           align-items: center;
           justify-content: center;
           min-height: 100vh;
-          background: #0B1731;
-          padding: 24px;
+          background: var(--surface-neutral-1);
+          padding: var(--space-2xl);
         }
         .auth-card {
           width: 100%;
           max-width: 400px;
-          background: rgba(255,255,255,0.04);
-          border: 1px solid rgba(123, 145, 148, 0.15);
-          border-radius: var(--radius-lg);
-          padding: 40px 36px;
+          background: var(--surface-neutral-3);
+          border-radius: var(--radius-l);
+          padding: var(--space-4xl) var(--space-3xl);
         }
         .auth-header {
           text-align: center;
-          margin-bottom: 32px;
+          margin-bottom: var(--space-3xl);
         }
         .sea-logo-mark {
           font-size: 0.78rem;
-          font-weight: 700;
-          letter-spacing: 0.28em;
-          color: #CB0D00;
+          font-weight: 600;
+          letter-spacing: 0.26em;
+          color: var(--content-neutral-3);
           text-transform: uppercase;
-          margin-bottom: 12px;
+          margin-bottom: var(--space-m);
         }
         .auth-product-name {
           font-size: 1.6rem;
           font-weight: 400;
-          color: rgba(255,255,255,0.6);
+          color: var(--content-neutral-1);
           margin-bottom: 6px;
-          letter-spacing: 0.02em;
+          letter-spacing: 0.01em;
         }
-        .auth-product-name strong {
-          color: #FFFFFF;
-          font-weight: 700;
-        }
-        .auth-subtitle {
-          color: #7B9194;
-          font-size: 0.85rem;
-        }
+        .auth-product-name strong { color: var(--content-neutral-3); font-weight: 600; }
+        .auth-subtitle { color: var(--content-neutral-1); font-size: 0.88rem; }
         .auth-form {
           display: flex;
           flex-direction: column;
-          gap: 20px;
+          gap: var(--space-xl);
         }
         .form-group {
           display: flex;
@@ -131,10 +124,10 @@ export function AuthCard({ onLogin, loading }) {
           gap: 6px;
         }
         .form-group label {
-          font-size: 0.68rem;
-          font-weight: 700;
-          letter-spacing: 0.1em;
-          color: #CB0D00;
+          font-size: 0.7rem;
+          font-weight: 500;
+          letter-spacing: 0.05em;
+          color: var(--content-neutral-1);
           text-transform: uppercase;
         }
         .input-wrapper {
@@ -145,92 +138,83 @@ export function AuthCard({ onLogin, loading }) {
         .input-wrapper svg {
           position: absolute;
           left: 13px;
-          color: #7B9194;
+          color: var(--content-neutral-1);
           pointer-events: none;
+          z-index: 1;
         }
         .input-wrapper input {
           width: 100%;
-          padding: 11px 14px 11px 40px;
-          background: rgba(11, 23, 49, 0.6);
-          border: 1px solid rgba(123, 145, 148, 0.2);
-          border-radius: var(--radius-sm);
-          color: #FFFFFF;
+          height: 48px;
+          padding: 0 14px 0 40px;
+          background: var(--surface-neutral-4);
+          border: none;
+          border-radius: var(--radius-s);
+          color: var(--content-neutral-3);
           font-size: 0.9rem;
           font-family: inherit;
         }
-        .input-wrapper input::placeholder {
-          color: rgba(123, 145, 148, 0.5);
-        }
+        .input-wrapper input::placeholder { color: var(--content-neutral-1); }
         .input-wrapper input:focus {
-          outline: none;
-          border-color: #CB0D00;
-          box-shadow: 0 0 0 3px rgba(203, 13, 0, 0.12);
+          outline: 2px solid var(--accent-primary-2);
+          outline-offset: -1px;
         }
         .auth-submit {
-          margin-top: 4px;
+          margin-top: var(--space-xs);
           width: 100%;
-          padding: 12px;
-          background: #CB0D00;
+          height: 48px;
+          background: var(--surface-primary-3);
           color: #FFFFFF;
           font-size: 0.9rem;
-          font-weight: 700;
-          letter-spacing: 0.05em;
-          text-transform: uppercase;
+          font-weight: 600;
+          letter-spacing: 0.03em;
           border: none;
-          border-radius: var(--radius-sm);
+          border-radius: var(--radius-m);
           cursor: pointer;
-          transition: filter 0.2s, transform 0.2s;
+          transition: filter var(--transition);
           font-family: inherit;
           justify-content: center;
           display: flex;
           align-items: center;
         }
-        .auth-submit:hover:not(:disabled) {
-          filter: brightness(1.15);
-          transform: translateY(-1px);
-        }
-        .auth-submit:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
+        .auth-submit:hover:not(:disabled) { filter: brightness(1.12); }
+        .auth-submit:disabled { opacity: var(--opacity-disabled); cursor: not-allowed; }
         .auth-help {
-          margin-top: 28px;
-          padding: 16px;
-          background: rgba(6, 64, 76, 0.2);
-          border-radius: var(--radius-md);
-          border: 1px solid rgba(6, 64, 76, 0.3);
+          margin-top: var(--space-2xl);
+          padding: var(--space-l);
+          background: var(--surface-neutral-4);
+          border-radius: var(--radius-m);
         }
         .help-header {
           display: flex;
           align-items: center;
           gap: 6px;
-          color: #7B9194;
-          font-size: 0.65rem;
-          font-weight: 700;
-          letter-spacing: 0.1em;
+          color: var(--content-neutral-1);
+          font-size: 0.66rem;
+          font-weight: 500;
+          letter-spacing: 0.06em;
           text-transform: uppercase;
-          margin-bottom: 10px;
+          margin-bottom: var(--space-s);
         }
         .auth-help p {
-          color: #7B9194;
-          font-size: 0.83rem;
+          color: var(--content-neutral-2);
+          font-size: 0.85rem;
           line-height: 1.5;
-          margin-bottom: 8px;
+          margin-bottom: var(--space-s);
         }
         .auth-help a {
-          color: #CB0D00;
+          color: var(--accent-primary-2);
           text-decoration: none;
           font-weight: 600;
         }
         .auth-help a:hover { text-decoration: underline; }
         .help-steps {
-          margin: 8px 0 4px;
+          margin: var(--space-s) 0 var(--space-xs);
           padding-left: 18px;
-          color: #7B9194;
-          font-size: 0.83rem;
+          color: var(--content-neutral-2);
+          font-size: 0.85rem;
           line-height: 1.7;
         }
-        .help-steps li strong { color: rgba(255,255,255,0.75); }
+        .help-steps li strong { color: var(--content-neutral-3); }
       `}} />
     </div>
   );

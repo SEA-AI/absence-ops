@@ -73,15 +73,15 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
 
   if (events.length === 0) {
     return (
-      <div className="empty-state glass">
-        <Clock size={48} />
-        <p>No time tracked events found for the selected period.</p>
+      <div className="empty-state">
+        <Clock size={40} strokeWidth={1.5} />
+        <p>No time-tracked events for the selected period.</p>
       </div>
     );
   }
 
   return (
-    <div className="table-container glass animate-fade">
+    <div className="table-container">
       <table>
         <thead>
           <tr>
@@ -213,8 +213,8 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
         .table-container {
           flex: 1;
           overflow: auto;
-          margin-top: var(--spacing-sm);
-          border-radius: var(--radius-md);
+          border-radius: var(--radius-m);
+          background: var(--surface-neutral-3);
         }
         table {
           width: 100%;
@@ -225,208 +225,148 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
         th {
           position: sticky;
           top: 0;
-          background: var(--sea-blue, #0B1731);
+          background: var(--surface-neutral-3);
           padding: 12px 16px;
-          color: var(--sea-grey, #7B9194);
-          font-weight: 700;
+          color: var(--content-neutral-1);
+          font-weight: 500;
           text-transform: uppercase;
           font-size: 0.72rem;
-          letter-spacing: 0.07em;
+          letter-spacing: 0.05em;
           z-index: 10;
           white-space: nowrap;
         }
-        .light-theme th {
-          background: var(--bg-secondary, #ffffff);
-          border-bottom: 2px solid var(--sea-red, #CB0D00);
-        }
         td {
-          padding: 14px 16px;
-          border-bottom: 1px solid var(--glass-border);
-          transition: background 0.15s;
+          padding: 12px 16px;
+          background: var(--surface-neutral-4);
+          transition: background var(--transition);
           vertical-align: middle;
         }
-        tr:hover td {
-          background: var(--primary-dim);
-        }
+        /* row gap via shell showing through (flat dividers) */
+        tbody tr { box-shadow: 0 1px 0 0 var(--surface-neutral-3); }
+        tr:hover td { background: var(--surface-neutral-5); }
         tr.selected td {
-          background: var(--primary-dim);
-          border-left: 2px solid var(--primary);
+          background: color-mix(in srgb, var(--surface-primary-3) 22%, var(--surface-neutral-4));
         }
         tr.selected td:first-child {
-          padding-left: 14px;
+          box-shadow: inset 3px 0 0 0 var(--surface-primary-3);
         }
-        .checkbox-col {
-          width: 50px;
-          text-align: center;
-        }
-        .date-main {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
+        .checkbox-col, .checkbox-cell { width: 48px; text-align: center; }
+
+        .date-main { display: flex; align-items: center; gap: var(--space-s); }
         .expand-toggle {
           background: transparent;
-          color: var(--text-secondary);
+          color: var(--content-neutral-1);
           border: none;
           padding: 2px;
           cursor: pointer;
           display: flex;
-          transition: transform 0.2s;
+          transition: transform var(--transition);
         }
-        .expand-toggle.open {
-          transform: rotate(90deg);
-        }
-        .main-date {
-          font-weight: 600;
-          color: var(--text-primary);
-        }
+        .expand-toggle.open { transform: rotate(90deg); }
+        .main-date { font-weight: 600; color: var(--content-neutral-3); }
         .time-sub {
           font-size: 0.75rem;
-          color: var(--text-secondary);
+          color: var(--content-neutral-1);
           margin-top: 2px;
           padding-left: 24px;
+          font-variant-numeric: tabular-nums;
         }
-        .duration-cell {
-          min-width: 120px;
-        }
+        .duration-cell { min-width: 110px; }
         .duration-box {
           display: inline-flex;
           align-items: center;
-          padding: 4px 10px;
-          border-radius: 6px;
-          font-size: 0.75rem;
+          padding: 3px 9px;
+          border-radius: var(--radius-s);
+          font-size: 0.78rem;
           font-weight: 600;
-        }
-        .duration-box.work {
-          background: var(--secondary-dim);
-          color: var(--sea-grey, #7B9194);
-          border: 1px solid rgba(6, 64, 76, 0.25);
+          background: var(--surface-neutral-5);
+          color: var(--content-neutral-2);
           font-variant-numeric: tabular-nums;
         }
         .duration-box.break {
-          background: var(--primary-dim);
-          color: var(--muted);
-          border: 1px solid rgba(203, 13, 0, 0.15);
+          background: transparent;
+          color: var(--content-neutral-1);
         }
         .duration-box.mini {
-          font-size: 0.7rem;
+          font-size: 0.72rem;
           padding: 2px 8px;
           font-weight: 500;
         }
-        
-        /* Timeline */
-        .timeline-col {
-          min-width: 150px;
-        }
+
+        /* Timeline — work = primary blue (the tracked data), break = neutral */
+        .timeline-col { min-width: 140px; }
         .mini-timeline {
           height: 6px;
-          background: var(--glass-border);
-          border-radius: 3px;
+          background: var(--surface-neutral-5);
+          border-radius: var(--radius-xs);
           display: flex;
           overflow: hidden;
           width: 120px;
         }
-        .timeline-chunk {
-          height: 100%;
-        }
-        .timeline-chunk.work {
-          background: var(--secondary, #06404C);
-        }
-        .timeline-chunk.break {
-          background: var(--primary, #CB0D00);
-          opacity: 0.4;
-        }
+        .timeline-chunk { height: 100%; }
+        .timeline-chunk.work { background: var(--surface-primary-3); }
+        .timeline-chunk.break { background: var(--content-neutral-1); opacity: 0.5; }
 
-        /* Sub-rows */
-        .sub-row {
-          background: rgba(0,0,0,0.05);
-          font-size: 0.85rem;
-        }
+        /* Sub-rows — recessed surface */
         .sub-row td {
           padding: 8px 16px;
-          color: var(--text-secondary);
-          border-bottom: 1px solid var(--glass-border);
+          background: var(--surface-neutral-3);
+          color: var(--content-neutral-2);
+          font-size: 0.85rem;
         }
         .sub-time {
           padding-left: 48px !important;
-          font-family: inherit;
           font-weight: 500;
+          font-variant-numeric: tabular-nums;
         }
+        tr.break td { color: var(--content-neutral-1); }
 
-        tr.break td {
-          opacity: 0.6;
-        }
-        .labels-list {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 4px;
-        }
+        .labels-list { display: flex; flex-wrap: wrap; gap: var(--space-xs); align-items: center; }
         .label-tag {
-          background: var(--secondary-dim);
-          padding: 2px 7px;
-          border-radius: 3px;
+          background: var(--surface-neutral-5);
+          padding: 2px 8px;
+          border-radius: var(--radius-s);
           font-size: 0.72rem;
-          font-weight: 600;
+          font-weight: 500;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
           display: inline-flex;
           align-items: center;
-          gap: 3px;
-          color: var(--muted);
-          border: 1px solid rgba(6, 64, 76, 0.2);
+          gap: 4px;
+          color: var(--content-neutral-2);
           white-space: nowrap;
-          max-width: 120px;
+          max-width: 130px;
           overflow: hidden;
           text-overflow: ellipsis;
         }
-        .label-tag.mini {
-          border: none;
-          background: var(--secondary-dim);
-          font-size: 0.65rem;
-          max-width: 100px;
-        }
+        .label-tag svg { color: var(--content-neutral-1); flex-shrink: 0; }
+        .label-tag.mini { font-size: 0.66rem; max-width: 110px; }
+        /* overflow = neutral "more" affordance, NOT red (red = error) */
         .label-overflow {
-          background: var(--primary-dim);
-          color: var(--primary);
-          padding: 2px 6px;
-          border-radius: 3px;
-          font-size: 0.7rem;
-          font-weight: 700;
-          border: 1px solid rgba(203, 13, 0, 0.2);
+          background: var(--surface-neutral-5);
+          color: var(--content-neutral-1);
+          padding: 2px 7px;
+          border-radius: var(--radius-s);
+          font-size: 0.72rem;
+          font-weight: 600;
           cursor: default;
           white-space: nowrap;
         }
         .no-labels {
-          color: var(--muted);
-          font-style: italic;
+          color: var(--content-neutral-1);
           font-size: 0.75rem;
-          opacity: 0.6;
         }
-        .notes-cell {
-          color: var(--text-secondary);
-          font-size: 0.85rem;
-        }
-        .notes-cell.mini {
-          font-size: 0.75rem;
-          font-style: italic;
-        }
-        .group-meta {
-           color: var(--text-secondary);
-           font-size: 0.8rem;
-           opacity: 0.7;
-        }
-        .group-meta.clickable {
-          cursor: pointer;
-        }
-        .group-meta.clickable:hover {
-          color: var(--primary);
-          opacity: 1;
-          text-decoration: underline;
-        }
+        .notes-cell { color: var(--content-neutral-2); font-size: 0.85rem; }
+        .notes-cell.mini { font-size: 0.78rem; color: var(--content-neutral-1); }
+        .group-meta { color: var(--content-neutral-1); font-size: 0.8rem; }
+        .group-meta.clickable { cursor: pointer; }
+        .group-meta.clickable:hover { color: var(--content-neutral-3); }
         .commentary {
-           max-width: 250px;
-           display: block;
-           overflow: hidden;
-           text-overflow: ellipsis;
-           white-space: nowrap;
+          max-width: 280px;
+          display: block;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
         .empty-state {
           flex: 1;
@@ -434,10 +374,10 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
           flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 20px;
-          color: var(--text-secondary);
-          border-radius: var(--radius-md);
-          margin-top: 20px;
+          gap: var(--space-l);
+          color: var(--content-neutral-1);
+          border-radius: var(--radius-m);
+          background: var(--surface-neutral-3);
         }
       `}} />
     </div>

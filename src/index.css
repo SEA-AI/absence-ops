@@ -1,81 +1,99 @@
 @import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap');
 
-/* ── SEA.AI Brand Colors ── */
+/* ============================================================
+   SEA.AI Product UI — token system (frontend.md)
+   Flat surfaces, depth from value contrast only.
+   Color = state. Three signals: primary / danger / warning.
+   ============================================================ */
+
 :root {
-  --sea-red:    #CB0D00;
-  --sea-blue:   #0B1731;
-  --sea-teal:   #06404C;
-  --sea-grey:   #7B9194;
-  --sea-fog:    #DFDED9;
-  --sea-white:  #FFFFFF;
-  --sea-black:  #000000;
+  /* radius */
+  --radius-xs: 2px;
+  --radius-s:  4px;
+  --radius-m:  8px;
+  --radius-l:  16px;
 
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 1rem;
-  --spacing-md: 1.5rem;
-  --spacing-lg: 2.5rem;
-  --radius-sm:  6px;
-  --radius-md:  10px;
-  --radius-lg:  16px;
-  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --shadow:     0 4px 16px rgba(0, 0, 0, 0.12);
+  /* spacing */
+  --space-xs:  4px;
+  --space-s:   8px;
+  --space-m:   12px;
+  --space-l:   16px;
+  --space-xl:  20px;
+  --space-2xl: 24px;
+  --space-3xl: 32px;
+  --space-4xl: 48px;
+
+  /* signal text + accents (stable across themes) */
+  --content-primary-1: #CFE5FC;
+  --content-danger-1:  #FA9EA9;
+  --content-warning-1: #FAE39E;
+  --accent-primary-2:  #0A67C2;
+  --accent-danger-2:   #C20A20;
+
+  --opacity-disabled: 0.4;
+  --transition: 0.2s ease-in-out;
 }
 
-/* ── Dark Theme (Night Blue base) ── */
-.dark-theme {
-  --bg-main:      #0B1731;
-  --bg-secondary: #111f35;
-  --bg-card:      rgba(6, 64, 76, 0.25);
-  --text-primary:   #FFFFFF;
-  --text-secondary: #7B9194;
-  --glass-bg:     rgba(11, 23, 49, 0.7);
-  --glass-border: rgba(123, 145, 148, 0.18);
-  --primary:      #CB0D00;
-  --primary-dim:  rgba(203, 13, 0, 0.12);
-  --secondary:    #06404C;
-  --secondary-dim: rgba(6, 64, 76, 0.4);
-  --muted:        #7B9194;
-  --danger:       #CB0D00;
-  --success:      #06404C;
-  --success-text: #7B9194;
-  --shadow:       0 4px 20px rgba(0, 0, 0, 0.4);
+/* ---- DARK (product default) ---- */
+[data-theme="DARK"] {
+  --surface-neutral-1: #101214;
+  --surface-neutral-2: #181B1E;
+  --surface-neutral-3: #202428;
+  --surface-neutral-4: #292E33;
+  --surface-neutral-5: #31373D;
+  --content-neutral-1: #747C84;
+  --content-neutral-2: #B9BDC1;
+  --content-neutral-3: #FFFFFF;
+  --surface-primary-3: #0A67C2;
+  --surface-danger-3:  #C20A20;
+  --surface-warning-3: #F1B80D;
 }
 
-/* ── Light Theme (Fog White base) ── */
-.light-theme {
-  --bg-main:      #DFDED9;
-  --bg-secondary: #FFFFFF;
-  --bg-card:      #FFFFFF;
-  --text-primary:   #0B1731;
-  --text-secondary: #7B9194;
-  --glass-bg:     rgba(255, 255, 255, 0.92);
-  --glass-border: rgba(11, 23, 49, 0.1);
-  --primary:      #CB0D00;
-  --primary-dim:  rgba(203, 13, 0, 0.08);
-  --secondary:    #06404C;
-  --secondary-dim: rgba(6, 64, 76, 0.12);
-  --muted:        #7B9194;
-  --danger:       #CB0D00;
-  --success:      #06404C;
-  --success-text: #06404C;
-  --shadow:       0 4px 16px rgba(11, 23, 49, 0.1);
+/* ---- LIGHT (daytime) ---- */
+[data-theme="LIGHT"] {
+  --surface-neutral-1: #B9BDC1;
+  --surface-neutral-2: #CBCED1;
+  --surface-neutral-3: #DCDEE0;
+  --surface-neutral-4: #EEEFF0;
+  --surface-neutral-5: #FFFFFF;
+  --content-neutral-1: #747C84;
+  --content-neutral-2: #414951;
+  --content-neutral-3: #202428;
+  --surface-primary-3: #0A67C2;
+  --surface-danger-3:  #C20A20;
+  --surface-warning-3: #F1B80D;
+}
+
+/* ---- NIGHT (bridge — preserves night vision) ---- */
+[data-theme="NIGHT"] {
+  --surface-neutral-1: #000000;
+  --surface-neutral-2: #08090A;
+  --surface-neutral-3: #101214;
+  --surface-neutral-4: #181B1E;
+  --surface-neutral-5: #202428;
+  --content-neutral-1: #747C84;
+  --content-neutral-2: #A8ADB2;
+  --content-neutral-3: #DCDEE0;
+  --surface-primary-3: #084C91;
+  --surface-danger-3:  #910818;
+  --surface-warning-3: #C2940A;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Barlow Semi Condensed', 'Arial Narrow', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Barlow Semi Condensed', 'Arial Narrow', Arial, sans-serif;
 }
 
 body {
-  background-color: var(--bg-main);
-  color: var(--text-primary);
+  background: var(--surface-neutral-1);
+  color: var(--content-neutral-3);
   min-height: 100vh;
-  transition: background-color 0.2s ease, color 0.2s ease;
   -webkit-font-smoothing: antialiased;
   font-size: 16px;
   line-height: 1.5;
+  transition: background var(--transition), color var(--transition);
 }
 
 #root {
@@ -84,99 +102,144 @@ body {
   min-height: 100vh;
 }
 
-/* ── Glass Card ── */
-.glass {
-  background: var(--glass-bg);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid var(--glass-border);
-  border-radius: var(--radius-md);
+/* ---- typography helpers ---- */
+.t-card-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--content-neutral-1);
 }
 
-/* ── Animations ── */
-.animate-fade {
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ── Buttons ── */
+/* ============================================================
+   Buttons
+   ============================================================ */
 button {
   cursor: pointer;
-  transition: var(--transition);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-m);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  font-weight: 600;
+  gap: var(--space-s);
   font-family: inherit;
   font-size: 0.9rem;
-  letter-spacing: 0.02em;
+  font-weight: 500;
+  transition: background var(--transition), color var(--transition);
 }
 
 button.primary {
-  background: var(--primary);
+  background: var(--surface-primary-3);
   color: #FFFFFF;
-  padding: 0.65rem 1.25rem;
+  padding: 0 var(--space-l);
+  height: 40px;
 }
-
-button.primary:hover:not(:disabled) {
-  filter: brightness(1.15);
-  transform: translateY(-1px);
-}
+button.primary:hover:not(:disabled) { filter: brightness(1.12); }
 
 button.secondary {
-  background: var(--glass-bg);
-  color: var(--text-primary);
-  border: 1px solid var(--glass-border);
-  padding: 0.5rem 0.9rem;
+  background: var(--surface-neutral-4);
+  color: var(--content-neutral-3);
+  padding: 0 var(--space-m);
+  height: 40px;
 }
+button.secondary:hover:not(:disabled) { background: var(--surface-neutral-5); }
 
-button.secondary:hover:not(:disabled) {
-  background: var(--glass-border);
-  border-color: var(--muted);
-}
+button.sm { height: 32px; font-size: 0.85rem; padding: 0 var(--space-m); }
 
-button.sm {
-  padding: 0.35rem 0.75rem;
-  font-size: 0.82rem;
-}
+button:disabled { opacity: var(--opacity-disabled); pointer-events: none; }
 
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
-
-/* ── Inputs ── */
+/* ============================================================
+   Inputs — flat, no border in default state
+   ============================================================ */
 input,
 select {
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  color: var(--text-primary);
-  border-radius: var(--radius-sm);
-  padding: 0.55rem 0.9rem;
-  transition: var(--transition);
+  background: var(--surface-neutral-4);
+  border: none;
+  color: var(--content-neutral-3);
+  border-radius: var(--radius-s);
+  padding: 0 var(--space-l);
+  height: 40px;
   font-family: inherit;
   font-size: 0.9rem;
+  transition: outline var(--transition);
 }
+
+input::placeholder { color: var(--content-neutral-1); }
 
 input:focus,
 select:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(203, 13, 0, 0.15);
+  outline: 2px solid var(--accent-primary-2);
+  outline-offset: -1px;
 }
 
-/* ── Scrollbar ── */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+input[type="checkbox"] {
+  height: auto;
+  padding: 0;
+}
+
+/* ---- native checkbox themed to primary ---- */
+input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  appearance: none;
+  -webkit-appearance: none;
+  background: var(--surface-neutral-5);
+  border-radius: var(--radius-s);
+  cursor: pointer;
+  position: relative;
+  transition: background var(--transition);
+}
+input[type="checkbox"]:checked {
+  background: var(--surface-primary-3);
+}
+input[type="checkbox"]:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1px;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+/* ============================================================
+   Status pill
+   ============================================================ */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-s);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.pill--ok {
+  background: var(--surface-neutral-4);
+  color: var(--content-neutral-2);
+}
+.pill--ok .pill-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--surface-primary-3);
+}
+.pill--danger { background: var(--surface-danger-3); color: #fff; }
+.pill--warning { background: var(--surface-warning-3); color: #000; }
+
+/* ============================================================
+   Scrollbar
+   ============================================================ */
+::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {
-  background: var(--glass-border);
-  border-radius: 3px;
+  background: var(--surface-neutral-5);
+  border-radius: var(--radius-s);
 }
-::-webkit-scrollbar-thumb:hover { background: var(--muted); }
+::-webkit-scrollbar-thumb:hover { background: var(--content-neutral-1); }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+}
