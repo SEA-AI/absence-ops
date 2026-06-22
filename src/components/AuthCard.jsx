@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Key, Lock, Info } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 import styles from './AuthCard.module.css';
+import logoWhite from '../assets/logo-white.svg';
+import logoBlack from '../assets/logo-black.jpg';
 
 export function AuthCard({ onLogin, loading }) {
+  const { theme } = useTheme();
   const [clientId, setClientId] = useState('');
   const [clientSecret, setClientSecret] = useState('');
 
@@ -17,7 +21,11 @@ export function AuthCard({ onLogin, loading }) {
     <div className={styles.authContainer}>
       <div className={styles.authCard}>
         <div className={styles.authHeader}>
-          <div className={styles.seaLogoMark}>S E A . A I</div>
+          <img
+            src={theme === 'LIGHT' ? logoBlack : logoWhite}
+            alt="SEA.AI"
+            className={styles.seaLogoMark}
+          />
           <div className={styles.authProductName}>Absence <strong>Ops</strong></div>
           <p className={styles.authSubtitle}>Connect with your OAuth credentials</p>
         </div>

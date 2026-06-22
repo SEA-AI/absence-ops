@@ -18,12 +18,9 @@
   border-radius: var(--radius-m);
 }
 .seaBrand { display: flex; align-items: center; gap: var(--space-m); }
-.seaMark {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.24em;
-  color: var(--content-neutral-3);
-  text-transform: uppercase;
+.seaLogo {
+  height: 22px;
+  width: auto;
 }
 .seaDivider {
   width: 1px;

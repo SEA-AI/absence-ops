@@ -1,4 +1,31 @@
-@import url('https://fonts.googleapis.com/css2?family=Barlow+Semi+Condensed:wght@400;500;600;700&display=swap');
+@font-face {
+  font-family: 'Barlow Semi Condensed';
+  src: url('./assets/fonts/BarlowSemiCondensed-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Barlow Semi Condensed';
+  src: url('./assets/fonts/BarlowSemiCondensed-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Barlow Semi Condensed';
+  src: url('./assets/fonts/BarlowSemiCondensed-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: block;
+}
+@font-face {
+  font-family: 'Barlow Semi Condensed';
+  src: url('./assets/fonts/BarlowSemiCondensed-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
 
 /* ============================================================
    SEA.AI Product UI — token system (frontend.md)

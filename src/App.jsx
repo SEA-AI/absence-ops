@@ -9,6 +9,8 @@ import { StatsDashboard } from './components/StatsDashboard';
 import { LogOut, Sun, Moon, MoonStar, CalendarDays, List } from 'lucide-react';
 import { useTheme, THEMES } from './context/ThemeContext';
 import styles from './App.module.css';
+import logoWhite from './assets/logo-white.svg';
+import logoBlack from './assets/logo-black.jpg';
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -57,6 +59,7 @@ function ViewToggle({ viewMode, setViewMode }) {
 }
 
 function App() {
+  const { theme } = useTheme();
   const [auth, setAuth] = useState(() => {
     const saved = localStorage.getItem('absence_auth');
     return saved ? JSON.parse(saved) : null;
@@ -261,7 +264,11 @@ function App() {
     <div className={styles.dashboard}>
       <header className={styles.seaHeader}>
         <div className={styles.seaBrand}>
-          <span className={styles.seaMark}>S E A . A I</span>
+          <img
+            src={theme === 'LIGHT' ? logoBlack : logoWhite}
+            alt="SEA.AI"
+            className={styles.seaLogo}
+          />
           <span className={styles.seaDivider} />
           <span className={styles.seaProduct}>Absence <strong>Ops</strong></span>
         </div>

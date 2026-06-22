@@ -18,11 +18,8 @@
   margin-bottom: var(--space-3xl);
 }
 .seaLogoMark {
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.26em;
-  color: var(--content-neutral-3);
-  text-transform: uppercase;
+  height: 28px;
+  width: auto;
   margin-bottom: var(--space-m);
 }
 .authProductName {
