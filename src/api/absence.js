@@ -116,15 +116,17 @@ export const absenceApi = {
     /**
      * Batch update timespans
      */
-    async batchUpdateLabels(auth, ids, labelIds) {
+    async batchUpdateLabels(auth, ids, labelIds, onProgress) {
         const results = [];
-        for (const id of ids) {
+        for (let i = 0; i < ids.length; i++) {
+            const id = ids[i];
             try {
                 const result = await this.updateTimespan(auth, id, { labelIds });
                 results.push({ id, status: 'success', data: result });
             } catch (error) {
                 results.push({ id, status: 'error', error: error.message });
             }
+            if (onProgress) onProgress(i + 1, ids.length);
         }
         return results;
     }

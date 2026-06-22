@@ -1,0 +1,80 @@
+.dashboard {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: var(--space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  height: 100vh;
+}
+
+.seaHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 var(--space-l);
+  height: 56px;
+  background: var(--surface-neutral-3);
+  border-radius: var(--radius-m);
+}
+.seaBrand { display: flex; align-items: center; gap: var(--space-m); }
+.seaLogo {
+  height: 22px;
+  width: auto;
+}
+.seaDivider {
+  width: 1px;
+  height: 18px;
+  background: var(--surface-neutral-5);
+}
+.seaProduct {
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--content-neutral-1);
+  letter-spacing: 0.01em;
+}
+.seaProduct strong { color: var(--content-neutral-3); font-weight: 600; }
+
+.headerRight { display: flex; align-items: center; gap: var(--space-s); }
+.logoutBtn { font-size: 0.85rem; }
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
+  overflow: hidden;
+}
+.mainControls { flex-shrink: 0; }
+
+.themeToggleBtn {
+  width: 40px;
+  padding: 0;
+  color: var(--content-neutral-2);
+}
+
+.discreteViewToggle {
+  display: flex;
+  background: var(--surface-neutral-4);
+  padding: 3px;
+  border-radius: var(--radius-m);
+  gap: 3px;
+}
+.viewBtn {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--content-neutral-1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.viewBtn:hover:not(.active) {
+  background: var(--surface-neutral-5);
+  color: var(--content-neutral-2);
+}
+.viewBtn.active {
+  background: var(--surface-primary-3);
+  color: #FFFFFF;
+}

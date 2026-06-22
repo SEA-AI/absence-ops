@@ -5,6 +5,14 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Absence Ops</title>
+    <script>
+      // Set theme before paint to avoid flash of wrong surface colors.
+      (function () {
+        var t = localStorage.getItem('theme');
+        if (['DARK', 'LIGHT', 'NIGHT'].indexOf(t) === -1) t = 'DARK';
+        document.documentElement.setAttribute('data-theme', t);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

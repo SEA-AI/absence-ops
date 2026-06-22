@@ -1,6 +1,9 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { Clock, Tag as TagIcon, ChevronRight } from 'lucide-react';
+import styles from './EventTable.module.css';
+
+const MAX_VISIBLE_LABELS = 3;
 
 export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMode }) {
   const [expandedRows, setExpandedRows] = React.useState([]);
@@ -8,6 +11,28 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
   const getLabelName = (id) => {
     const label = labels.find(l => l._id === id);
     return label ? label.name : id;
+  };
+
+  const renderLabels = (labelIds) => {
+    if (!labelIds || labelIds.length === 0) {
+      return <span className={styles.noLabels}>None</span>;
+    }
+    const visible = labelIds.slice(0, MAX_VISIBLE_LABELS);
+    const overflow = labelIds.length - MAX_VISIBLE_LABELS;
+    const overflowNames = labelIds.slice(MAX_VISIBLE_LABELS).map(getLabelName).join(', ');
+    return (
+      <>
+        {visible.map(id => (
+          <span key={id} className={styles.labelTag} title={getLabelName(id)}>
+            <TagIcon size={9} />
+            {getLabelName(id)}
+          </span>
+        ))}
+        {overflow > 0 && (
+          <span className={styles.labelOverflow} title={overflowNames}>+{overflow}</span>
+        )}
+      </>
+    );
   };
 
   const formatDuration = (seconds) => {
@@ -29,12 +54,10 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
 
   const handleSelect = (e, id, index) => {
     e.stopPropagation();
-
     if (e.shiftKey && lastSelectedIndex !== null) {
       const start = Math.min(lastSelectedIndex, index);
       const end = Math.max(lastSelectedIndex, index);
       const rangeIds = events.slice(start, end + 1).map(ev => ev._id);
-
       const newSelection = Array.from(new Set([...selectedIds, ...rangeIds]));
       onToggleSelect(newSelection);
     } else {
@@ -49,19 +72,24 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
 
   if (events.length === 0) {
     return (
-      <div className="empty-state glass">
-        <Clock size={48} />
-        <p>No time tracked events found for the selected period.</p>
+      <div className={styles.emptyState}>
+        <Clock size={40} strokeWidth={1.5} />
+        <p>No time-tracked events for the selected period.</p>
       </div>
     );
   }
 
+  const rowClass = (event) => [
+    selectedIds.includes(event._id) ? styles.selected : '',
+    event.type === 'break' ? styles.break : '',
+  ].filter(Boolean).join(' ');
+
   return (
-    <div className="table-container glass animate-fade">
+    <div className={styles.tableContainer}>
       <table>
         <thead>
           <tr>
-            <th className="checkbox-col">
+            <th className={styles.checkboxCol}>
               <input
                 type="checkbox"
                 checked={selectedIds.length === events.length && events.length > 0}
@@ -82,10 +110,10 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
           {events.map((event, index) => (
             <React.Fragment key={event._id}>
               <tr
-                className={`${selectedIds.includes(event._id) ? 'selected' : ''} ${event.type || ''} ${event.isGroup ? 'group-row' : ''}`}
+                className={rowClass(event)}
                 onClick={(e) => handleSelect(e, event._id, index)}
               >
-                <td className="checkbox-cell">
+                <td className={styles.checkboxCell}>
                   <input
                     type="checkbox"
                     checked={selectedIds.includes(event._id)}
@@ -94,39 +122,38 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
                   />
                 </td>
                 <td>
-                  <div className="date-cell">
-                    <div className="date-main">
-                      {event.isGroup && (
-                        <button
-                          className={`expand-toggle ${expandedRows.includes(event._id) ? 'open' : ''}`}
-                          onClick={(e) => toggleExpand(e, event._id)}
-                        >
-                          <ChevronRight size={16} />
-                        </button>
-                      )}
-                      <span className="main-date">
-                        {format(new Date(event.start), 'MMM d, yyyy')}
-                      </span>
-                    </div>
-                    {viewMode === 'detailed' && (
-                      <span className="time-sub">
-                        {format(new Date(event.start), 'HH:mm')} - {event.end ? format(new Date(event.end), 'HH:mm') : 'Active'}
-                      </span>
+                  <div className={styles.dateMain}>
+                    {event.isGroup && (
+                      <button
+                        className={`${styles.expandToggle} ${expandedRows.includes(event._id) ? styles.open : ''}`}
+                        onClick={(e) => toggleExpand(e, event._id)}
+                      >
+                        <ChevronRight size={16} />
+                      </button>
                     )}
+                    <span className={styles.mainDate}>
+                      {format(new Date(event.start), 'MMM d, yyyy')}
+                    </span>
                   </div>
+                  {viewMode === 'detailed' && (
+                    <span className={styles.timeSub}>
+                      {format(new Date(event.start), 'HH:mm')} -{' '}
+                      {event.end ? format(new Date(event.end), 'HH:mm') : 'Active'}
+                    </span>
+                  )}
                 </td>
-                <td className="duration-cell">
-                  <div className="duration-box work">
+                <td className={styles.durationCell}>
+                  <div className={`${styles.durationBox} ${event.type === 'break' ? styles.break : ''}`}>
                     {formatDuration(event.duration || event.calcDuration)}
                   </div>
                 </td>
                 {viewMode === 'daily' && (
-                  <td className="timeline-col">
-                    <div className="mini-timeline">
+                  <td className={styles.timelineCol}>
+                    <div className={styles.miniTimeline}>
                       {event.items?.map((item, idx) => (
                         <div
                           key={idx}
-                          className={`timeline-chunk ${item.type}`}
+                          className={`${styles.timelineChunk} ${item.type === 'work' ? styles.work : styles.break}`}
                           style={{ flex: item.calcDuration }}
                           title={`${item.type}: ${formatDuration(item.calcDuration)}`}
                         />
@@ -135,55 +162,49 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
                   </td>
                 )}
                 <td>
-                  <div className="labels-list">
-                    {event.labelIds && event.labelIds.length > 0 ? (
-                      event.labelIds.map(id => (
-                        <span key={id} className="label-tag">
-                          <TagIcon size={10} />
-                          {getLabelName(id)}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="no-labels">None</span>
-                    )}
+                  <div className={styles.labelsList}>
+                    {renderLabels(event.labelIds)}
                   </div>
                 </td>
-                <td className="notes-cell">
+                <td className={styles.notesCell}>
                   {event.isGroup ? (
                     <span
-                      className="group-meta clickable"
+                      className={`${styles.groupMeta} ${styles.clickable}`}
                       onClick={(e) => toggleExpand(e, event._id)}
                     >
                       {event.ids.length} work periods
                     </span>
                   ) : (
-                    <span className="commentary">{event.commentary || '-'}</span>
+                    <span className={styles.commentary}>{event.commentary || '-'}</span>
                   )}
                 </td>
               </tr>
-              {/* Expanded sub-items */}
               {event.isGroup && expandedRows.includes(event._id) && event.items.map(item => (
-                <tr key={item._id} className={`sub-row ${item.type}`}>
+                <tr
+                  key={item._id}
+                  className={`${styles.subRow} ${item.type === 'break' ? styles.break : ''}`}
+                >
                   <td />
-                  <td className="sub-time">
-                    {format(new Date(item.start), 'HH:mm')} - {item.end ? format(new Date(item.end), 'HH:mm') : 'Active'}
+                  <td className={styles.subTime}>
+                    {format(new Date(item.start), 'HH:mm')} -{' '}
+                    {item.end ? format(new Date(item.end), 'HH:mm') : 'Active'}
                   </td>
                   <td>
-                    <div className={`duration-box ${item.type} mini`}>
+                    <div className={`${styles.durationBox} ${item.type === 'break' ? styles.break : ''} ${styles.mini}`}>
                       {formatDuration(item.calcDuration)}
                     </div>
                   </td>
                   <td />
                   <td>
-                    <div className="labels-list">
+                    <div className={styles.labelsList}>
                       {item.labelIds?.map(id => (
-                        <span key={id} className="label-tag mini">
+                        <span key={id} className={`${styles.labelTag} ${styles.mini}`}>
                           {getLabelName(id)}
                         </span>
                       ))}
                     </div>
                   </td>
-                  <td className="notes-cell mini">
+                  <td className={`${styles.notesCell} ${styles.mini}`}>
                     {item.commentary}
                   </td>
                 </tr>
@@ -192,210 +213,6 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
           ))}
         </tbody>
       </table>
-
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        .table-container {
-          flex: 1;
-          overflow: auto;
-          margin-top: var(--spacing-sm);
-          border-radius: var(--radius-md);
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          text-align: left;
-          font-size: 0.9rem;
-        }
-        th {
-          position: sticky;
-          top: 0;
-          background: var(--bg-navy);
-          padding: 16px;
-          color: var(--text-secondary);
-          font-weight: 600;
-          text-transform: uppercase;
-          font-size: 0.75rem;
-          letter-spacing: 0.05em;
-          z-index: 10;
-        }
-        td {
-          padding: 16px;
-          border-bottom: 1px solid var(--glass-border);
-          transition: background 0.2s;
-        }
-        tr:hover td {
-          background: var(--glass-bg);
-        }
-        tr.selected td {
-          background: rgba(134, 182, 184, 0.1);
-        }
-        .checkbox-col {
-          width: 50px;
-          text-align: center;
-        }
-        .date-main {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-        .expand-toggle {
-          background: transparent;
-          color: var(--text-secondary);
-          border: none;
-          padding: 2px;
-          cursor: pointer;
-          display: flex;
-          transition: transform 0.2s;
-        }
-        .expand-toggle.open {
-          transform: rotate(90deg);
-        }
-        .main-date {
-          font-weight: 600;
-          color: var(--text-primary);
-        }
-        .time-sub {
-          font-size: 0.75rem;
-          color: var(--text-secondary);
-          margin-top: 2px;
-          padding-left: 24px;
-        }
-        .duration-cell {
-          min-width: 120px;
-        }
-        .duration-box {
-          display: inline-flex;
-          align-items: center;
-          padding: 4px 10px;
-          border-radius: 6px;
-          font-size: 0.75rem;
-          font-weight: 600;
-        }
-        .duration-box.work {
-          background: rgba(134, 182, 184, 0.1);
-          color: var(--primary);
-          border: 1px solid rgba(134, 182, 184, 0.2);
-        }
-        .duration-box.break {
-          background: rgba(233, 80, 80, 0.1);
-          color: var(--danger);
-          border: 1px solid rgba(233, 80, 80, 0.2);
-        }
-        .duration-box.mini {
-          font-size: 0.7rem;
-          padding: 2px 8px;
-          font-weight: 500;
-        }
-        
-        /* Timeline */
-        .timeline-col {
-          min-width: 150px;
-        }
-        .mini-timeline {
-          height: 6px;
-          background: var(--glass-border);
-          border-radius: 3px;
-          display: flex;
-          overflow: hidden;
-          width: 120px;
-        }
-        .timeline-chunk {
-          height: 100%;
-        }
-        .timeline-chunk.work {
-          background: var(--primary);
-        }
-        .timeline-chunk.break {
-          background: var(--danger);
-          opacity: 0.5;
-        }
-
-        /* Sub-rows */
-        .sub-row {
-          background: rgba(0,0,0,0.05);
-          font-size: 0.85rem;
-        }
-        .sub-row td {
-          padding: 8px 16px;
-          color: var(--text-secondary);
-          border-bottom: 1px solid var(--glass-border);
-        }
-        .sub-time {
-          padding-left: 48px !important;
-          font-family: inherit;
-          font-weight: 500;
-        }
-
-        tr.break td {
-          opacity: 0.6;
-        }
-        .labels-list {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 4px;
-        }
-        .label-tag {
-          background: var(--glass-bg);
-          padding: 2px 8px;
-          border-radius: 4px;
-          font-size: 0.7rem;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          color: var(--text-secondary);
-          border: 1px solid var(--glass-border);
-        }
-        .label-tag.mini {
-          border: none;
-          background: var(--glass-border);
-          font-size: 0.65rem;
-        }
-        .no-labels {
-          color: var(--text-secondary);
-          font-style: italic;
-          font-size: 0.75rem;
-        }
-        .notes-cell {
-          color: var(--text-secondary);
-          font-size: 0.85rem;
-        }
-        .notes-cell.mini {
-          font-size: 0.75rem;
-          font-style: italic;
-        }
-        .group-meta {
-           color: var(--text-secondary);
-           font-size: 0.8rem;
-           opacity: 0.7;
-        }
-        .group-meta.clickable {
-          cursor: pointer;
-        }
-        .group-meta.clickable:hover {
-          color: var(--primary);
-          opacity: 1;
-          text-decoration: underline;
-        }
-        .commentary {
-           max-width: 250px;
-           display: block;
-           overflow: hidden;
-           text-overflow: ellipsis;
-           white-space: nowrap;
-        }
-        .empty-state {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          justify-content: center;
-          gap: 20px;
-          color: var(--text-secondary);
-          border-radius: var(--radius-md);
-          margin-top: 20px;
-        }
-      `}} />
     </div>
   );
 }

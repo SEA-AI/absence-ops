@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Tag, CheckCircle2, AlertCircle, X, ChevronUp, Layers, Trash2 } from 'lucide-react';
+import styles from './BatchToolbox.module.css';
 
-export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onApply, onClear, processing, results }) {
+export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onApply, onClear, processing, results, bulkProgress }) {
   const [selectedLabelId, setSelectedLabelId] = useState('');
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -16,42 +17,54 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
   if (selectedCount === 0 && !results) return null;
 
   return (
-    <div className={`batch-toolbox-wrapper ${!isExpanded ? 'collapsed' : ''}`}>
-      <div className="glass batch-toolbox-island animate-pop">
+    <div className={styles.batchToolboxWrapper}>
+      <div className={styles.batchToolboxIsland}>
         {results ? (
-          <div className="results-container">
-            <div className="res-content">
-              <div className="status-badge success">
+          <div className={styles.resultsContainer}>
+            <div className={styles.resContent}>
+              <div className={`${styles.statusBadge} ${styles.success}`}>
                 <CheckCircle2 size={18} />
                 <span>{results.filter(r => r.status === 'success').length} Updated</span>
               </div>
               {results.some(r => r.status === 'error') && (
-                <div className="status-badge error">
+                <div className={`${styles.statusBadge} ${styles.error}`}>
                   <AlertCircle size={18} />
                   <span>{results.filter(r => r.status === 'error').length} Failed</span>
                 </div>
               )}
             </div>
-            <button className="close-btn" onClick={() => onApply(null)}>
+            <button className={styles.closeBtn} onClick={() => onApply(null)}>
               <X size={18} />
             </button>
           </div>
         ) : (
-          <div className="action-container">
-            <div className="toolbox-info" onClick={() => setIsExpanded(!isExpanded)}>
-              <div className="selection-pill">
+          <div className={styles.actionContainer}>
+            <div className={styles.toolboxInfo} onClick={() => setIsExpanded(!isExpanded)}>
+              <div className={styles.selectionPill}>
                 <Layers size={14} />
                 <span>{selectedCount} Selected ({formatDuration(selectedTotalDuration)})</span>
               </div>
-              {!isExpanded && <ChevronUp size={16} className="expand-icon" />}
+              {!isExpanded && <ChevronUp size={16} />}
             </div>
+
+            {processing && bulkProgress && (
+              <div className={styles.progressContainer}>
+                <div className={styles.progressTrack}>
+                  <div
+                    className={styles.progressFillBar}
+                    style={{ width: `${Math.round((bulkProgress.current / bulkProgress.total) * 100)}%` }}
+                  />
+                </div>
+                <span className={styles.progressLabel}>{bulkProgress.current}/{bulkProgress.total}</span>
+              </div>
+            )}
 
             {isExpanded && (
               <>
-                <div className="divider" />
-                <div className="control-group">
-                  <div className="select-wrapper">
-                    <Tag size={14} className="input-icon" />
+                <div className={styles.divider} />
+                <div className={styles.controlGroup}>
+                  <div className={styles.selectWrapper}>
+                    <Tag size={14} className={styles.inputIcon} />
                     <select
                       value={selectedLabelId}
                       onChange={(e) => setSelectedLabelId(e.target.value)}
@@ -64,19 +77,15 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
                     </select>
                   </div>
                   <button
-                    className="primary-action"
+                    className={styles.primaryAction}
                     onClick={() => onApply(selectedLabelId)}
                     disabled={!selectedLabelId || processing}
                   >
-                    {processing ? (
-                      <div className="loader" />
-                    ) : (
-                      'Apply'
-                    )}
+                    {processing ? <div className={styles.loader} /> : 'Apply'}
                   </button>
-                  <div className="divider" />
+                  <div className={styles.divider} />
                   <button
-                    className="danger-action"
+                    className={styles.dangerAction}
                     onClick={onClear}
                     disabled={processing || selectedCount === 0}
                     title="Clear all labels"
@@ -89,194 +98,6 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
           </div>
         )}
       </div>
-
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        .batch-toolbox-wrapper {
-          position: fixed;
-          bottom: 40px;
-          left: 50%;
-          transform: translateX(-50%);
-          z-index: 1000;
-          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .batch-toolbox-island {
-          min-width: 320px;
-          padding: 8px;
-          border-radius: 24px;
-          border: 1px solid var(--glass-border);
-          box-shadow: var(--shadow);
-          background: var(--glass-bg);
-          backdrop-filter: blur(20px);
-        }
-        .action-container {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 4px;
-        }
-        .toolbox-info {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-          user-select: none;
-        }
-        .selection-pill {
-          background: var(--primary);
-          color: white;
-          padding: 8px 16px;
-          border-radius: 18px;
-          font-size: 13px;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          transition: transform 0.2s;
-        }
-        .selection-pill:hover {
-          transform: scale(1.02);
-        }
-        .divider {
-          width: 1px;
-          height: 24px;
-          background: var(--glass-border);
-        }
-        .control-group {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          flex: 1;
-        }
-        .select-wrapper {
-          position: relative;
-          flex: 1;
-          min-width: 140px;
-        }
-        .select-wrapper .input-icon {
-          position: absolute;
-          left: 12px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: var(--text-secondary);
-          pointer-events: none;
-        }
-        .select-wrapper select {
-          width: 100%;
-          padding: 8px 12px 8px 36px;
-          background: var(--bg-navy);
-          border: 1px solid var(--glass-border);
-          border-radius: 16px;
-          color: var(--text-primary);
-          font-size: 13px;
-          appearance: none;
-        }
-        .primary-action {
-          background: var(--text-primary);
-          color: var(--bg-main);
-          padding: 8px 16px;
-          border-radius: 16px;
-          font-size: 13px;
-          font-weight: 600;
-          border: none;
-          cursor: pointer;
-          transition: all 0.2s;
-          white-space: nowrap;
-        }
-        .primary-action:hover:not(:disabled) {
-          filter: brightness(0.9);
-          transform: translateY(-1px);
-        }
-        .danger-action {
-          background: rgba(233, 80, 80, 0.1);
-          color: var(--danger);
-          padding: 8px;
-          border-radius: 12px;
-          border: 1px solid rgba(233, 80, 80, 0.2);
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: all 0.2s;
-        }
-        .danger-action:hover:not(:disabled) {
-          background: var(--danger);
-          color: white;
-          transform: translateY(-1px);
-        }
-        .primary-action:disabled, .danger-action:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        
-        /* Results View */
-        .results-container {
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          padding: 4px 12px;
-        }
-        .res-content {
-          display: flex;
-          gap: 12px;
-        }
-        .status-badge {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 13px;
-          font-weight: 600;
-          padding: 6px 12px;
-          border-radius: 12px;
-        }
-        .status-badge.success {
-          background: rgba(34, 227, 146, 0.1);
-          color: var(--accent);
-        }
-        .status-badge.error {
-          background: rgba(233, 80, 80, 0.1);
-          color: var(--danger);
-        }
-        .close-btn {
-          background: var(--glass-bg);
-          border: 1px solid var(--glass-border);
-          color: var(--text-secondary);
-          padding: 6px;
-          border-radius: 50%;
-          cursor: pointer;
-          display: flex;
-          transition: all 0.2s;
-        }
-        .close-btn:hover {
-          background: var(--glass-border);
-          color: var(--text-primary);
-        }
-
-        .close-btn:hover {
-          background: var(--glass-border);
-          color: var(--text-primary);
-        }
-
-        .animate-pop {
-          animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        @keyframes pop {
-          from { transform: scale(0.9) translateY(20px); opacity: 0; }
-          to { transform: scale(1) translateY(0); opacity: 1; }
-        }
-        
-        .loader {
-          width: 16px;
-          height: 16px;
-          border: 2px solid var(--text-secondary);
-          border-top-color: var(--bg-main);
-          border-radius: 50%;
-          animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-          to { transform: rotate(360deg); }
-        }
-      `}} />
     </div>
   );
 }

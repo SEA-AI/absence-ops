@@ -1,0 +1,113 @@
+.statsDashboard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2xl);
+  padding: var(--space-m) var(--space-l);
+  background: var(--surface-neutral-3);
+  border-radius: var(--radius-m);
+  flex-shrink: 0;
+}
+.statsTotal {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.statIconInline {
+  color: var(--content-neutral-1);
+}
+.statLabelText {
+  font-size: 0.68rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--content-neutral-1);
+}
+.statValueMain {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--content-neutral-3);
+  font-variant-numeric: tabular-nums;
+}
+.statDays {
+  font-size: 0.72rem;
+  color: var(--content-neutral-2);
+  padding: 2px 7px;
+  background: var(--surface-neutral-5);
+  border-radius: var(--radius-s);
+  font-weight: 500;
+}
+
+.statsLabelStrip {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, black 88%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
+}
+.labelStripInner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 4px 0;
+}
+.labelStripInner::-webkit-scrollbar { display: none; }
+
+.labelStatItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 90px;
+  max-width: 180px;
+}
+.labelStatHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 6px;
+}
+.labelStatName {
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: var(--content-neutral-1);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.labelStatDur {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--content-neutral-3);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.labelStatBar {
+  width: 100%;
+  height: 3px;
+  background: var(--surface-neutral-5);
+  border-radius: var(--radius-xs);
+  overflow: hidden;
+}
+.labelStatFill {
+  height: 100%;
+  background: var(--content-neutral-2);
+  border-radius: var(--radius-xs);
+  min-width: 2px;
+}
+
+@media (max-width: 900px) {
+  .statsDashboard {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .statsLabelStrip {
+    width: 100%;
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  }
+}

@@ -6,29 +6,31 @@ import { FilterBar } from './components/FilterBar';
 import { EventTable } from './components/EventTable';
 import { BatchToolbox } from './components/BatchToolbox';
 import { StatsDashboard } from './components/StatsDashboard';
-import { LogOut, LayoutDashboard, Database, Sun, Moon, Laptop, CalendarDays, List } from 'lucide-react';
-import { useTheme } from './context/ThemeContext';
+import { LogOut, Sun, Moon, MoonStar, CalendarDays, List } from 'lucide-react';
+import { useTheme, THEMES } from './context/ThemeContext';
+import styles from './App.module.css';
+import logoWhite from './assets/logo-white.svg';
+import logoBlack from './assets/logo-black.jpg';
 
 function ThemeToggle() {
   const { theme, setTheme } = useTheme();
 
   const cycleTheme = () => {
-    if (theme === 'system') setTheme('light');
-    else if (theme === 'light') setTheme('dark');
-    else setTheme('system');
+    const next = THEMES[(THEMES.indexOf(theme) + 1) % THEMES.length];
+    setTheme(next);
   };
 
   const getIcon = () => {
-    if (theme === 'light') return <Sun size={18} />;
-    if (theme === 'dark') return <Moon size={18} />;
-    return <Laptop size={18} />;
+    if (theme === 'LIGHT') return <Sun size={18} />;
+    if (theme === 'DARK') return <Moon size={18} />;
+    return <MoonStar size={18} />;
   };
 
   return (
     <button
-      className="secondary theme-toggle-btn"
+      className={`secondary ${styles.themeToggleBtn}`}
       onClick={cycleTheme}
-      title={`Theme: ${theme}`}
+      title={`Theme: ${theme} (click to cycle)`}
     >
       {getIcon()}
     </button>
@@ -37,16 +39,16 @@ function ThemeToggle() {
 
 function ViewToggle({ viewMode, setViewMode }) {
   return (
-    <div className="discrete-view-toggle">
+    <div className={styles.discreteViewToggle}>
       <button
-        className={`view-btn ${viewMode === 'daily' ? 'active' : ''}`}
+        className={`${styles.viewBtn} ${viewMode === 'daily' ? styles.active : ''}`}
         onClick={() => setViewMode('daily')}
         title="Daily Summary"
       >
         <CalendarDays size={18} />
       </button>
       <button
-        className={`view-btn ${viewMode === 'detailed' ? 'active' : ''}`}
+        className={`${styles.viewBtn} ${viewMode === 'detailed' ? styles.active : ''}`}
         onClick={() => setViewMode('detailed')}
         title="Detailed List"
       >
@@ -57,6 +59,7 @@ function ViewToggle({ viewMode, setViewMode }) {
 }
 
 function App() {
+  const { theme } = useTheme();
   const [auth, setAuth] = useState(() => {
     const saved = localStorage.getItem('absence_auth');
     return saved ? JSON.parse(saved) : null;
@@ -68,8 +71,9 @@ function App() {
   const [selectedIds, setSelectedIds] = useState([]);
   const [processing, setProcessing] = useState(false);
   const [bulkResults, setBulkResults] = useState(null);
+  const [bulkProgress, setBulkProgress] = useState(null);
 
-  const [viewMode, setViewMode] = useState('daily'); // 'daily' or 'detailed'
+  const [viewMode, setViewMode] = useState('daily');
 
   const [dateRange, setDateRange] = useState({
     start: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
@@ -77,7 +81,6 @@ function App() {
   });
 
   const processedEvents = useMemo(() => {
-    // 1. Calculate duration for all events
     const enhanced = events.map(e => ({
       ...e,
       calcDuration: e.end ? (new Date(e.end) - new Date(e.start)) / 1000 : 0
@@ -85,7 +88,6 @@ function App() {
 
     if (viewMode === 'detailed') return enhanced;
 
-    // 2. Group by date for Daily view
     const groups = enhanced.reduce((acc, event) => {
       const dateKey = format(new Date(event.start), 'yyyy-MM-dd');
       if (!acc[dateKey]) {
@@ -102,7 +104,6 @@ function App() {
         };
       }
 
-      // Only sum 'work' types into the duration for the grant tracking
       if (event.type === 'work') {
         acc[dateKey].duration += event.calcDuration;
         acc[dateKey].ids.push(event._id);
@@ -132,9 +133,7 @@ function App() {
     workEvents.forEach(e => {
       const dur = e.end ? (new Date(e.end) - new Date(e.start)) / 1000 : 0;
       if (e.labelIds && e.labelIds.length > 0) {
-        e.labelIds.forEach(id => {
-          labelMap[id] = (labelMap[id] || 0) + dur;
-        });
+        e.labelIds.forEach(id => { labelMap[id] = (labelMap[id] || 0) + dur; });
       } else {
         labelMap['unlabeled'] = (labelMap['unlabeled'] || 0) + dur;
       }
@@ -149,12 +148,7 @@ function App() {
     const uniqueDays = new Set(events.map(e => format(new Date(e.start), 'yyyy-MM-dd'))).size;
     const dailyAverage = uniqueDays > 0 ? totalDuration / uniqueDays : 0;
 
-    return {
-      totalDuration,
-      labelBreakdown,
-      dailyAverage,
-      uniqueDays
-    };
+    return { totalDuration, labelBreakdown, dailyAverage, uniqueDays };
   }, [events]);
 
   const selectedTotalDuration = useMemo(() => {
@@ -214,74 +208,86 @@ function App() {
       return;
     }
 
-    // Flatten selected IDs if they are groups, and strictly filter for 'work' type
     const targetIds = processedEvents
       .filter(e => selectedIds.includes(e._id))
       .flatMap(e => e.isGroup ? e.ids : (e.type === 'work' ? [e._id] : []));
 
     if (targetIds.length === 0) return;
 
+    setBulkProgress({ current: 0, total: targetIds.length });
     setProcessing(true);
     try {
-      const results = await absenceApi.batchUpdateLabels(auth, targetIds, [labelId]);
+      const results = await absenceApi.batchUpdateLabels(auth, targetIds, [labelId], (current, total) => {
+        setBulkProgress({ current, total });
+      });
       setBulkResults(results);
-      await fetchData(); // Refresh table
+      setBulkProgress(null);
+      await fetchData();
     } catch (err) {
       alert('Batch update failed: ' + err.message);
     } finally {
       setProcessing(false);
+      setBulkProgress(null);
     }
   };
 
   const handleBatchClear = async () => {
-    // Flatten selected IDs if they are groups, and strictly filter for 'work' type
     const targetIds = processedEvents
       .filter(e => selectedIds.includes(e._id))
       .flatMap(e => e.isGroup ? e.ids : (e.type === 'work' ? [e._id] : []));
 
     if (targetIds.length === 0) return;
-
     if (!confirm(`Are you sure you want to clear labels from ${targetIds.length} items?`)) return;
 
+    setBulkProgress({ current: 0, total: targetIds.length });
     setProcessing(true);
     try {
-      const results = await absenceApi.batchUpdateLabels(auth, targetIds, []);
+      const results = await absenceApi.batchUpdateLabels(auth, targetIds, [], (current, total) => {
+        setBulkProgress({ current, total });
+      });
       setBulkResults(results);
-      await fetchData(); // Refresh table
+      setBulkProgress(null);
+      await fetchData();
     } catch (err) {
       alert('Batch clear failed: ' + err.message);
     } finally {
       setProcessing(false);
+      setBulkProgress(null);
     }
   };
 
   if (!auth) {
-    return <AuthCard onLogin={handleLogin} />;
+    return <AuthCard onLogin={handleLogin} loading={loading} />;
   }
 
   return (
-    <div className="dashboard">
-      <header className="glass">
-        <div className="header-left">
-          <LayoutDashboard className="primary-icon" />
-          <h1>Absence <span>Ops</span></h1>
+    <div className={styles.dashboard}>
+      <header className={styles.seaHeader}>
+        <div className={styles.seaBrand}>
+          <img
+            src={theme === 'LIGHT' ? logoBlack : logoWhite}
+            alt="SEA.AI"
+            className={styles.seaLogo}
+          />
+          <span className={styles.seaDivider} />
+          <span className={styles.seaProduct}>Absence <strong>Ops</strong></span>
         </div>
-        <div className="header-right">
+        <div className={styles.headerRight}>
           <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
           <ThemeToggle />
-          <div className="api-status">
-            <Database size={16} />
+          <span className="pill pill--ok">
+            <span className="pill-dot" />
             Connected
-          </div>
-          <button className="secondary logout-btn" onClick={handleLogout}>
-            <LogOut size={16} />
+          </span>
+          <button className={`secondary ${styles.logoutBtn}`} onClick={handleLogout}>
+            <LogOut size={15} />
             Logout
           </button>
         </div>
       </header>
 
-      <main>
-        <div className="main-controls">
+      <main className={styles.main}>
+        <div className={styles.mainControls}>
           <FilterBar
             startDate={dateRange.start}
             endDate={dateRange.end}
@@ -310,120 +316,8 @@ function App() {
         onClear={handleBatchClear}
         processing={processing}
         results={bulkResults}
+        bulkProgress={bulkProgress}
       />
-
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        .dashboard {
-          max-width: 1600px;
-          margin: 0 auto;
-          padding: var(--spacing-md);
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-          height: 100vh;
-        }
-        header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: var(--spacing-sm) var(--spacing-md);
-          margin-bottom: 4px;
-        }
-        .header-left {
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-sm);
-        }
-        .header-left h1 {
-          font-size: 1.25rem;
-          font-weight: 700;
-        }
-        .header-left h1 span {
-          color: var(--primary);
-        }
-        .primary-icon {
-          color: var(--primary);
-        }
-        .header-right {
-          display: flex;
-          align-items: center;
-          gap: var(--spacing-sm);
-        }
-        .api-status {
-          display: flex;
-          align-items: center;
-          gap: 6px;
-          font-size: 0.85rem;
-          color: var(--accent);
-          background: rgba(34, 227, 146, 0.1);
-          padding: 6px 12px;
-          border-radius: 20px;
-          border: 1px solid rgba(34, 227, 146, 0.2);
-        }
-        main {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          overflow: hidden;
-        }
-        .main-controls {
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-sm);
-        }
-        .view-toggle {
-          display: flex;
-          padding: 4px;
-          width: fit-content;
-        }
-        .view-toggle button {
-          padding: 8px 20px;
-          border-radius: var(--radius-sm);
-          font-size: 0.9rem;
-          background: transparent;
-          color: var(--text-secondary);
-        }
-        .view-toggle button.active {
-          background: var(--primary);
-          color: white;
-          box-shadow: var(--shadow);
-        }
-        .view-toggle button:hover:not(.active) {
-          background: var(--glass-border);
-        }
-        .theme-toggle-btn {
-          padding: 8px;
-          border-radius: 12px;
-        }
-        .discrete-view-toggle {
-          display: flex;
-          background: var(--glass-border);
-          padding: 4px;
-          border-radius: 12px;
-          gap: 2px;
-        }
-        .view-btn {
-          padding: 6px;
-          border-radius: 8px;
-          background: transparent;
-          color: var(--text-secondary);
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          transition: var(--transition);
-        }
-        .view-btn:hover:not(.active) {
-          background: rgba(255,255,255,0.05);
-          color: var(--text-primary);
-        }
-        .view-btn.active {
-          background: var(--primary);
-          color: white;
-          box-shadow: var(--shadow);
-        }
-      `}} />
     </div>
   );
 }
