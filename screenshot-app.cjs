@@ -74,14 +74,14 @@ async function run(browser, { theme='DARK', events=EVENTS, viewport={width:1400,
     await p.screenshot({ path:'screenshots/app-05-many-labels.png' }); console.log('✓ many-labels'); }});
 
   await run(browser, { theme:'DARK', fn: async p => {
-    const cb = p.locator('td.checkbox-cell input[type="checkbox"]');
+    const cb = p.locator('tbody input[type="checkbox"]');
     await cb.nth(0).click(); await sleep(150);
     await cb.nth(1).click(); await sleep(150);
     await cb.nth(2).click(); await sleep(300);
     await p.screenshot({ path:'screenshots/app-06-batch-toolbox.png' }); console.log('✓ batch'); }});
 
   await run(browser, { theme:'DARK', fn: async p => {
-    await p.locator('.expand-toggle').first().click(); await sleep(300);
+    await p.locator('tbody button').first().click(); await sleep(300);
     await p.screenshot({ path:'screenshots/app-07-expanded.png' }); console.log('✓ expanded'); }});
 
   await run(browser, { theme:'DARK', viewport:{width:390,height:844}, fn: async p => {
