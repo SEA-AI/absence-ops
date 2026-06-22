@@ -41,3 +41,6 @@ lerna-debug.log*
 # Vite / System
 *.tsbuildinfo
 node_modules/.vite
+
+# Playwright screenshots (local dev artefacts)
+screenshots/
