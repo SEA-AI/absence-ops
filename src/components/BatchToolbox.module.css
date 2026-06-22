@@ -1,0 +1,198 @@
+.batchToolboxWrapper {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+.batchToolboxIsland {
+  min-width: 340px;
+  padding: var(--space-s);
+  border-radius: var(--radius-l);
+  background: var(--surface-neutral-5);
+}
+.actionContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  padding: var(--space-xs);
+}
+.toolboxInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  cursor: pointer;
+  user-select: none;
+}
+.selectionPill {
+  background: var(--surface-primary-3);
+  color: #FFFFFF;
+  padding: 8px 14px;
+  border-radius: var(--radius-m);
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+.divider {
+  width: 1px;
+  height: 24px;
+  background: var(--surface-neutral-3);
+}
+.controlGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-m);
+  flex: 1;
+}
+.selectWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 150px;
+}
+.selectWrapper .inputIcon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--content-neutral-1);
+  pointer-events: none;
+}
+.selectWrapper select {
+  width: 100%;
+  height: 40px;
+  padding: 0 12px 0 36px;
+  background: var(--surface-neutral-3);
+  border: none;
+  border-radius: var(--radius-m);
+  color: var(--content-neutral-3);
+  font-size: 13px;
+  appearance: none;
+}
+.primaryAction {
+  background: var(--surface-primary-3);
+  color: #FFFFFF;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: var(--radius-m);
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: filter var(--transition);
+  white-space: nowrap;
+  min-width: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.primaryAction:hover:not(:disabled) { filter: brightness(1.12); }
+.dangerAction {
+  background: transparent;
+  color: var(--content-danger-1);
+  height: 40px;
+  width: 40px;
+  border-radius: var(--radius-m);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition), color var(--transition);
+}
+.dangerAction:hover:not(:disabled) {
+  background: var(--surface-danger-3);
+  color: #FFFFFF;
+}
+.primaryAction:disabled,
+.dangerAction:disabled {
+  opacity: var(--opacity-disabled);
+  cursor: not-allowed;
+}
+
+/* Results view */
+.resultsContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-l);
+  padding: var(--space-xs) var(--space-m);
+}
+.resContent { display: flex; gap: var(--space-m); }
+.statusBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: var(--radius-m);
+}
+.statusBadge.success {
+  background: var(--surface-neutral-3);
+  color: var(--content-neutral-2);
+}
+.statusBadge.error {
+  background: var(--surface-danger-3);
+  color: #FFFFFF;
+}
+.closeBtn {
+  background: var(--surface-neutral-3);
+  border: none;
+  color: var(--content-neutral-2);
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-m);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition), color var(--transition);
+}
+.closeBtn:hover {
+  background: var(--surface-neutral-4);
+  color: var(--content-neutral-3);
+}
+
+.loader {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.35);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.progressContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-s);
+  flex: 1;
+  min-width: 120px;
+}
+.progressTrack {
+  flex: 1;
+  height: 8px;
+  background: var(--surface-neutral-3);
+  border-radius: var(--radius-s);
+  overflow: hidden;
+}
+.progressFillBar {
+  height: 100%;
+  background: var(--surface-primary-3);
+  border-radius: var(--radius-s);
+  transition: width 0.4s ease-in-out;
+  min-width: 4px;
+}
+.progressLabel {
+  font-size: 12px;
+  color: var(--content-neutral-2);
+  white-space: nowrap;
+  font-weight: 600;
+  min-width: 38px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}

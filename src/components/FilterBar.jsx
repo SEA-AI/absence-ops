@@ -1,6 +1,7 @@
 import React from 'react';
 import { Calendar, RefreshCw, ChevronRight } from 'lucide-react';
 import { format, subDays, subYears, startOfMonth } from 'date-fns';
+import styles from './FilterBar.module.css';
 
 export function FilterBar({ startDate, endDate, onDateChange, onRefresh, loading }) {
   const setQuickRange = (range) => {
@@ -16,8 +17,8 @@ export function FilterBar({ startDate, endDate, onDateChange, onRefresh, loading
   };
 
   return (
-    <div className="filter-bar">
-      <div className="range-presets">
+    <div className={styles.filterBar}>
+      <div className={styles.rangePresets}>
         <button className="secondary sm" onClick={() => setQuickRange('today')}>Today</button>
         <button className="secondary sm" onClick={() => setQuickRange('7d')}>Last 7d</button>
         <button className="secondary sm" onClick={() => setQuickRange('30d')}>Last 30d</button>
@@ -26,18 +27,18 @@ export function FilterBar({ startDate, endDate, onDateChange, onRefresh, loading
         <button className="secondary sm" onClick={() => setQuickRange('month')}>This Month</button>
       </div>
 
-      <div className="date-inputs">
-        <div className="input-group">
-          <Calendar size={14} className="date-icon" />
+      <div className={styles.dateInputs}>
+        <div className={styles.inputGroup}>
+          <Calendar size={14} className={styles.dateIcon} />
           <input
             type="date"
             value={startDate}
             onChange={(e) => onDateChange(e.target.value, endDate)}
           />
         </div>
-        <ChevronRight size={14} className="arrow" />
-        <div className="input-group">
-          <Calendar size={14} className="date-icon" />
+        <ChevronRight size={14} className={styles.arrow} />
+        <div className={styles.inputGroup}>
+          <Calendar size={14} className={styles.dateIcon} />
           <input
             type="date"
             value={endDate}
@@ -47,87 +48,9 @@ export function FilterBar({ startDate, endDate, onDateChange, onRefresh, loading
       </div>
 
       <button className="primary" onClick={onRefresh} disabled={loading}>
-        <RefreshCw size={16} className={loading ? 'spin' : ''} />
+        <RefreshCw size={16} className={loading ? styles.spin : ''} />
         {loading ? 'Loading…' : 'Refresh'}
       </button>
-
-      <style dangerouslySetInnerHTML={{
-        __html: `
-        .filter-bar {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          padding: var(--space-m) var(--space-l);
-          border-radius: var(--radius-m);
-          gap: var(--space-m);
-          flex-wrap: wrap;
-          background: var(--surface-neutral-3);
-        }
-        .range-presets {
-          display: flex;
-          flex-wrap: wrap;
-          gap: var(--space-s);
-        }
-        .date-inputs {
-          display: flex;
-          align-items: center;
-          gap: var(--space-s);
-        }
-        .input-group {
-          position: relative;
-          display: flex;
-          align-items: center;
-        }
-        .date-icon {
-          position: absolute;
-          left: 12px;
-          color: var(--content-neutral-1);
-          pointer-events: none;
-          z-index: 1;
-        }
-        .input-group input[type="date"] {
-          padding: 0 var(--space-m) 0 34px;
-          height: 40px;
-          font-size: 0.88rem;
-          cursor: pointer;
-          background: var(--surface-neutral-4);
-          border: none;
-          border-radius: var(--radius-s);
-          color: var(--content-neutral-3);
-          font-family: inherit;
-          letter-spacing: 0.01em;
-        }
-        .input-group input[type="date"]::-webkit-calendar-picker-indicator {
-          opacity: 0;
-          position: absolute;
-          right: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          cursor: pointer;
-        }
-        .arrow {
-          color: var(--content-neutral-1);
-          flex-shrink: 0;
-        }
-        .spin {
-          animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
-        }
-        @media (max-width: 900px) {
-          .filter-bar {
-            flex-direction: column;
-            align-items: stretch;
-            gap: var(--space-m);
-          }
-          .range-presets { justify-content: center; }
-          .date-inputs { justify-content: center; }
-          .filter-bar > button { width: 100%; justify-content: center; }
-        }
-      `}} />
     </div>
   );
 }
