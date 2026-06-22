@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Tag, CheckCircle2, AlertCircle, X, ChevronUp, Layers, Trash2 } from 'lucide-react';
 
-export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onApply, onClear, processing, results }) {
+export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onApply, onClear, processing, results, bulkProgress }) {
   const [selectedLabelId, setSelectedLabelId] = useState('');
   const [isExpanded, setIsExpanded] = useState(true);
 
@@ -45,6 +45,18 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
               </div>
               {!isExpanded && <ChevronUp size={16} className="expand-icon" />}
             </div>
+
+            {processing && bulkProgress && (
+                <div className="progress-container">
+                    <div className="progress-track">
+                        <div
+                            className="progress-fill-bar"
+                            style={{ width: `${Math.round((bulkProgress.current / bulkProgress.total) * 100)}%` }}
+                        />
+                    </div>
+                    <span className="progress-label">{bulkProgress.current}/{bulkProgress.total}</span>
+                </div>
+            )}
 
             {isExpanded && (
               <>
@@ -172,8 +184,8 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
           appearance: none;
         }
         .primary-action {
-          background: var(--text-primary);
-          color: var(--bg-main);
+          background: var(--primary);
+          color: #FFFFFF;
           padding: 8px 16px;
           border-radius: 16px;
           font-size: 13px;
@@ -230,11 +242,11 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
           border-radius: 12px;
         }
         .status-badge.success {
-          background: rgba(34, 227, 146, 0.1);
-          color: var(--accent);
+          background: var(--secondary-dim);
+          color: var(--success-text);
         }
         .status-badge.error {
-          background: rgba(233, 80, 80, 0.1);
+          background: var(--primary-dim);
           color: var(--danger);
         }
         .close-btn {
@@ -275,6 +287,33 @@ export function BatchToolbox({ selectedCount, selectedTotalDuration, labels, onA
         }
         @keyframes spin {
           to { transform: rotate(360deg); }
+        }
+        .progress-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+        .progress-track {
+            flex: 1;
+            height: 4px;
+            background: var(--glass-border);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .progress-fill-bar {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+        }
+        .progress-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            font-weight: 600;
+            min-width: 36px;
+            text-align: right;
         }
       `}} />
     </div>

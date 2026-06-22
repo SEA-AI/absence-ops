@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Key, Lock, Terminal, Info } from 'lucide-react';
+import { Key, Lock, Info } from 'lucide-react';
 
 export function AuthCard({ onLogin, loading }) {
   const [clientId, setClientId] = useState('');
@@ -14,61 +14,64 @@ export function AuthCard({ onLogin, loading }) {
 
   return (
     <div className="auth-container">
-      <div className="glass auth-card animate-fade">
+      <div className="auth-card animate-fade">
         <div className="auth-header">
-          <Terminal size={32} className="logo-icon" />
-          <h2>Absence Ops</h2>
-          <p>Login with your OAuth Credentials</p>
+          <div className="sea-logo-mark">S E A . A I</div>
+          <div className="auth-product-name">Absence <strong>Ops</strong></div>
+          <p className="auth-subtitle">Connect with your OAuth credentials</p>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="auth-form">
           <div className="form-group">
-            <label>Client ID</label>
+            <label htmlFor="clientId">CLIENT ID</label>
             <div className="input-wrapper">
-              <Key size={18} />
+              <Key size={15} />
               <input
+                id="clientId"
                 type="text"
                 value={clientId}
                 onChange={(e) => setClientId(e.target.value)}
                 placeholder="Enter Client ID"
                 required
                 disabled={loading}
+                autoComplete="username"
               />
             </div>
           </div>
 
           <div className="form-group">
-            <label>Client Secret</label>
+            <label htmlFor="clientSecret">CLIENT SECRET</label>
             <div className="input-wrapper">
-              <Lock size={18} />
+              <Lock size={15} />
               <input
+                id="clientSecret"
                 type="password"
                 value={clientSecret}
                 onChange={(e) => setClientSecret(e.target.value)}
                 placeholder="Enter Client Secret"
                 required
                 disabled={loading}
+                autoComplete="current-password"
               />
             </div>
           </div>
 
-          <button type="submit" className="primary full-width" disabled={loading}>
-            {loading ? 'Authenticating...' : 'Connect to API'}
+          <button type="submit" className="auth-submit" disabled={loading}>
+            {loading ? 'Authenticating…' : 'Connect to API'}
           </button>
         </form>
 
         <div className="auth-help">
           <div className="help-header">
-            <Info size={14} />
-            <span>Find your credentials</span>
+            <Info size={13} />
+            <span>WHERE TO FIND YOUR CREDENTIALS</span>
           </div>
           <p>Go to your <a href="https://app.absence.io/" target="_blank" rel="noopener noreferrer">absence.io account</a> and follow these steps:</p>
           <ol className="help-steps">
             <li>Click your <strong>User Icon</strong> (top-right)</li>
             <li>Select <strong>Show Profile</strong></li>
-            <li>Go to <strong>Integrations</strong> → <strong>OAuth</strong></li>
+            <li>Go to <strong>Integrations → OAuth</strong></li>
           </ol>
-          <p>Copy the <strong>Client Id</strong> and <strong>Client Secret</strong> from that page and paste them above.</p>
         </div>
       </div>
 
@@ -79,41 +82,60 @@ export function AuthCard({ onLogin, loading }) {
           align-items: center;
           justify-content: center;
           min-height: 100vh;
-          background: var(--bg-main);
+          background: #0B1731;
           padding: 24px;
         }
         .auth-card {
           width: 100%;
-          max-width: 420px;
-          padding: var(--spacing-lg);
+          max-width: 400px;
+          background: rgba(255,255,255,0.04);
+          border: 1px solid rgba(123, 145, 148, 0.15);
           border-radius: var(--radius-lg);
+          padding: 40px 36px;
         }
         .auth-header {
           text-align: center;
           margin-bottom: 32px;
         }
-        .logo-icon {
-          color: var(--primary);
-          margin-bottom: 16px;
+        .sea-logo-mark {
+          font-size: 0.78rem;
+          font-weight: 700;
+          letter-spacing: 0.28em;
+          color: #CB0D00;
+          text-transform: uppercase;
+          margin-bottom: 12px;
         }
-        .auth-header h2 {
-          font-size: 1.5rem;
-          margin-bottom: 8px;
-          color: var(--text-primary);
+        .auth-product-name {
+          font-size: 1.6rem;
+          font-weight: 400;
+          color: rgba(255,255,255,0.6);
+          margin-bottom: 6px;
+          letter-spacing: 0.02em;
         }
-        .auth-header p {
-          color: var(--text-secondary);
-          font-size: 0.9rem;
+        .auth-product-name strong {
+          color: #FFFFFF;
+          font-weight: 700;
+        }
+        .auth-subtitle {
+          color: #7B9194;
+          font-size: 0.85rem;
+        }
+        .auth-form {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
         }
         .form-group {
-          margin-bottom: 24px;
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
         }
         .form-group label {
-          display: block;
-          margin-bottom: 8px;
-          font-size: 0.85rem;
-          font-weight: 500;
-          color: var(--text-primary);
+          font-size: 0.68rem;
+          font-weight: 700;
+          letter-spacing: 0.1em;
+          color: #CB0D00;
+          text-transform: uppercase;
         }
         .input-wrapper {
           position: relative;
@@ -122,68 +144,93 @@ export function AuthCard({ onLogin, loading }) {
         }
         .input-wrapper svg {
           position: absolute;
-          left: 14px;
-          color: var(--text-secondary);
+          left: 13px;
+          color: #7B9194;
+          pointer-events: none;
         }
         .input-wrapper input {
           width: 100%;
-          padding-left: 44px;
-          background: var(--glass-bg);
-          border: 1px solid var(--glass-border);
-          color: var(--text-primary);
+          padding: 11px 14px 11px 40px;
+          background: rgba(11, 23, 49, 0.6);
+          border: 1px solid rgba(123, 145, 148, 0.2);
           border-radius: var(--radius-sm);
+          color: #FFFFFF;
+          font-size: 0.9rem;
+          font-family: inherit;
         }
-        .full-width {
+        .input-wrapper input::placeholder {
+          color: rgba(123, 145, 148, 0.5);
+        }
+        .input-wrapper input:focus {
+          outline: none;
+          border-color: #CB0D00;
+          box-shadow: 0 0 0 3px rgba(203, 13, 0, 0.12);
+        }
+        .auth-submit {
+          margin-top: 4px;
           width: 100%;
+          padding: 12px;
+          background: #CB0D00;
+          color: #FFFFFF;
+          font-size: 0.9rem;
+          font-weight: 700;
+          letter-spacing: 0.05em;
+          text-transform: uppercase;
+          border: none;
+          border-radius: var(--radius-sm);
+          cursor: pointer;
+          transition: filter 0.2s, transform 0.2s;
+          font-family: inherit;
           justify-content: center;
-          padding: 1rem;
-          margin-top: 10px;
+          display: flex;
+          align-items: center;
+        }
+        .auth-submit:hover:not(:disabled) {
+          filter: brightness(1.15);
+          transform: translateY(-1px);
+        }
+        .auth-submit:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
         }
         .auth-help {
-          margin-top: 32px;
+          margin-top: 28px;
           padding: 16px;
-          background: var(--glass-bg);
+          background: rgba(6, 64, 76, 0.2);
           border-radius: var(--radius-md);
-          border: 1px solid var(--glass-border);
+          border: 1px solid rgba(6, 64, 76, 0.3);
         }
         .help-header {
           display: flex;
           align-items: center;
           gap: 6px;
-          color: var(--text-primary);
-          font-size: 0.75rem;
-          font-weight: 600;
-          margin-bottom: 8px;
+          color: #7B9194;
+          font-size: 0.65rem;
+          font-weight: 700;
+          letter-spacing: 0.1em;
           text-transform: uppercase;
-          letter-spacing: 0.05em;
+          margin-bottom: 10px;
         }
         .auth-help p {
-          color: var(--text-secondary);
-          font-size: 0.85rem;
+          color: #7B9194;
+          font-size: 0.83rem;
           line-height: 1.5;
           margin-bottom: 8px;
         }
         .auth-help a {
-          color: var(--primary);
+          color: #CB0D00;
           text-decoration: none;
           font-weight: 600;
         }
-        .auth-help a:hover {
-          text-decoration: underline;
-        }
+        .auth-help a:hover { text-decoration: underline; }
         .help-steps {
-          margin: 12px 0;
-          padding-left: 20px;
-          color: var(--text-secondary);
-          font-size: 0.85rem;
-          line-height: 1.6;
+          margin: 8px 0 4px;
+          padding-left: 18px;
+          color: #7B9194;
+          font-size: 0.83rem;
+          line-height: 1.7;
         }
-        .help-steps li {
-          margin-bottom: 4px;
-        }
-        .help-steps li strong {
-          color: var(--text-primary);
-        }
+        .help-steps li strong { color: rgba(255,255,255,0.75); }
       `}} />
     </div>
   );

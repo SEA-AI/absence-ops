@@ -1,5 +1,5 @@
 import React from 'react';
-import { BarChart3, Clock, PieChart, TrendingUp } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 export function StatsDashboard({ stats, labels }) {
   const formatDuration = (seconds) => {
@@ -17,161 +17,151 @@ export function StatsDashboard({ stats, labels }) {
 
   return (
     <div className="stats-dashboard animate-fade">
-      <div className="stats-top">
-        <div className="stat-card">
-          <div className="stat-icon"><Clock size={12} /></div>
-          <span className="stat-label-mini">Total</span>
-          <div className="stat-value">{formatDuration(stats.totalDuration)}</div>
-          <div className="stat-sub">{stats.uniqueDays}d</div>
-        </div>
+      <div className="stats-total">
+        <Clock size={13} className="stat-icon-inline" />
+        <span className="stat-label-text">TOTAL</span>
+        <span className="stat-value-main">{formatDuration(stats.totalDuration)}</span>
+        <span className="stat-days">{stats.uniqueDays}d</span>
       </div>
 
-      <div className="stats-labels">
-        <div className="labels-grid">
-          {stats.labelBreakdown.map((item) => (
-            <div key={item.id} className="label-stat-row">
-              <div className="label-info">
-                <span className="label-name" title={getLabelName(item.id)}>{getLabelName(item.id)}</span>
-                <span className="label-duration">{formatDuration(item.duration)}</span>
+      {stats.labelBreakdown.length > 0 && (
+        <div className="stats-label-strip">
+          <div className="label-strip-inner">
+            {stats.labelBreakdown.map((item) => (
+              <div key={item.id} className="label-stat-item">
+                <div className="label-stat-header">
+                  <span className="label-stat-name" title={getLabelName(item.id)}>
+                    {getLabelName(item.id)}
+                  </span>
+                  <span className="label-stat-dur">{formatDuration(item.duration)}</span>
+                </div>
+                <div className="label-stat-bar">
+                  <div
+                    className="label-stat-fill"
+                    style={{ width: `${item.percentage}%` }}
+                    title={`${item.percentage.toFixed(1)}%`}
+                  />
+                </div>
               </div>
-              <div className="progress-mini">
-                <div
-                  className="progress-fill"
-                  style={{ width: `${item.percentage}%` }}
-                />
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <style dangerouslySetInnerHTML={{
         __html: `
         .stats-dashboard {
           display: flex;
           align-items: center;
-          gap: 32px;
+          gap: 24px;
           padding: 8px 16px;
-          margin-bottom: 8px;
-          background: transparent;
           border-bottom: 1px solid var(--glass-border);
-          border-radius: 0;
-        }
-        .stats-top {
-          display: flex;
-          align-items: center;
-          gap: 12px;
           flex-shrink: 0;
         }
-        .stat-card {
+        .stats-total {
           display: flex;
           align-items: center;
-          gap: 6px;
-          padding: 0;
+          gap: 7px;
+          flex-shrink: 0;
+          white-space: nowrap;
         }
-        .stat-icon {
-          width: 20px;
-          height: 20px;
-          background: var(--glass-border);
-          border-radius: 5px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+        .stat-icon-inline {
           color: var(--primary);
         }
-        .stat-icon svg {
-          width: 10px;
-          height: 10px;
-        }
-        .stat-label-mini {
-          font-size: 0.7rem;
+        .stat-label-text {
+          font-size: 0.68rem;
+          font-weight: 700;
           text-transform: uppercase;
-          color: var(--text-secondary);
-          letter-spacing: 0.05em;
-          margin-right: 2px;
+          letter-spacing: 0.1em;
+          color: var(--primary);
         }
-        .stat-value {
-          font-size: 1.1rem;
+        .stat-value-main {
+          font-size: 1.15rem;
           font-weight: 700;
           color: var(--text-primary);
-          line-height: 1;
+          font-variant-numeric: tabular-nums;
         }
-        .stat-sub {
-          font-size: 0.65rem;
-          color: var(--text-secondary);
-          opacity: 0.6;
-          margin-left: 2px;
+        .stat-days {
+          font-size: 0.72rem;
+          color: var(--muted);
+          padding: 2px 6px;
+          background: var(--glass-border);
+          border-radius: 3px;
+          font-weight: 600;
         }
 
-        .stats-labels {
+        /* Label strip */
+        .stats-label-strip {
           flex: 1;
           min-width: 0;
-          position: relative;
-          mask-image: linear-gradient(to right, black 85%, transparent 100%);
-          -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+          overflow: hidden;
+          mask-image: linear-gradient(to right, black 88%, transparent 100%);
+          -webkit-mask-image: linear-gradient(to right, black 88%, transparent 100%);
         }
-        .labels-grid {
+        .label-strip-inner {
           display: flex;
           align-items: center;
-          gap: 16px;
+          gap: 20px;
           overflow-x: auto;
           scrollbar-width: none;
           padding: 4px 0;
         }
-        .labels-grid::-webkit-scrollbar { display: none; }
+        .label-strip-inner::-webkit-scrollbar { display: none; }
 
-        .label-stat-row {
+        .label-stat-item {
           display: flex;
           flex-direction: column;
-          gap: 3px;
-          min-width: 100px;
-          max-width: 280px;
+          gap: 4px;
+          min-width: 90px;
+          max-width: 180px;
         }
-        .label-info {
+        .label-stat-header {
           display: flex;
           justify-content: space-between;
-          align-items: center;
-          gap: 8px;
-          font-size: 0.85rem;
+          align-items: baseline;
+          gap: 6px;
         }
-        .label-name {
+        .label-stat-name {
+          font-size: 0.78rem;
+          font-weight: 600;
           color: var(--text-secondary);
-          font-weight: 500;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+          font-size: 0.7rem;
         }
-        .label-duration {
+        .label-stat-dur {
+          font-size: 0.82rem;
+          font-weight: 700;
           color: var(--text-primary);
-          font-weight: 600;
           white-space: nowrap;
-          font-size: 0.8rem;
+          font-variant-numeric: tabular-nums;
         }
-        .progress-mini {
+        .label-stat-bar {
           width: 100%;
-          height: 3px;
+          height: 2px;
           background: var(--glass-border);
-          border-radius: 1.5px;
+          border-radius: 1px;
           overflow: hidden;
         }
-        .progress-fill {
+        .label-stat-fill {
           height: 100%;
           background: var(--primary);
           border-radius: 1px;
-        }
-        .no-stats {
-          display: none;
+          min-width: 2px;
         }
 
         @media (max-width: 900px) {
           .stats-dashboard {
             flex-direction: column;
             align-items: flex-start;
-            gap: 8px;
-            padding: 8px 16px;
+            gap: 10px;
           }
-          .stats-labels {
+          .stats-label-strip {
             width: 100%;
+            mask-image: linear-gradient(to right, black 80%, transparent 100%);
           }
         }
       `}} />

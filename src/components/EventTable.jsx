@@ -2,12 +2,36 @@ import React from 'react';
 import { format } from 'date-fns';
 import { Clock, Tag as TagIcon, ChevronRight } from 'lucide-react';
 
+const MAX_VISIBLE_LABELS = 3;
+
 export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMode }) {
   const [expandedRows, setExpandedRows] = React.useState([]);
 
   const getLabelName = (id) => {
     const label = labels.find(l => l._id === id);
     return label ? label.name : id;
+  };
+
+  const renderLabels = (labelIds) => {
+    if (!labelIds || labelIds.length === 0) {
+      return <span className="no-labels">None</span>;
+    }
+    const visible = labelIds.slice(0, MAX_VISIBLE_LABELS);
+    const overflow = labelIds.length - MAX_VISIBLE_LABELS;
+    const overflowNames = labelIds.slice(MAX_VISIBLE_LABELS).map(getLabelName).join(', ');
+    return (
+      <>
+        {visible.map(id => (
+          <span key={id} className="label-tag" title={getLabelName(id)}>
+            <TagIcon size={9} />
+            {getLabelName(id)}
+          </span>
+        ))}
+        {overflow > 0 && (
+          <span className="label-overflow" title={overflowNames}>+{overflow}</span>
+        )}
+      </>
+    );
   };
 
   const formatDuration = (seconds) => {
@@ -136,16 +160,7 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
                 )}
                 <td>
                   <div className="labels-list">
-                    {event.labelIds && event.labelIds.length > 0 ? (
-                      event.labelIds.map(id => (
-                        <span key={id} className="label-tag">
-                          <TagIcon size={10} />
-                          {getLabelName(id)}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="no-labels">None</span>
-                    )}
+                    {renderLabels(event.labelIds)}
                   </div>
                 </td>
                 <td className="notes-cell">
@@ -210,25 +225,35 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
         th {
           position: sticky;
           top: 0;
-          background: var(--bg-navy);
-          padding: 16px;
-          color: var(--text-secondary);
-          font-weight: 600;
+          background: var(--sea-blue, #0B1731);
+          padding: 12px 16px;
+          color: var(--sea-grey, #7B9194);
+          font-weight: 700;
           text-transform: uppercase;
-          font-size: 0.75rem;
-          letter-spacing: 0.05em;
+          font-size: 0.72rem;
+          letter-spacing: 0.07em;
           z-index: 10;
+          white-space: nowrap;
+        }
+        .light-theme th {
+          background: var(--bg-secondary, #ffffff);
+          border-bottom: 2px solid var(--sea-red, #CB0D00);
         }
         td {
-          padding: 16px;
+          padding: 14px 16px;
           border-bottom: 1px solid var(--glass-border);
-          transition: background 0.2s;
+          transition: background 0.15s;
+          vertical-align: middle;
         }
         tr:hover td {
-          background: var(--glass-bg);
+          background: var(--primary-dim);
         }
         tr.selected td {
-          background: rgba(134, 182, 184, 0.1);
+          background: var(--primary-dim);
+          border-left: 2px solid var(--primary);
+        }
+        tr.selected td:first-child {
+          padding-left: 14px;
         }
         .checkbox-col {
           width: 50px;
@@ -273,14 +298,15 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
           font-weight: 600;
         }
         .duration-box.work {
-          background: rgba(134, 182, 184, 0.1);
-          color: var(--primary);
-          border: 1px solid rgba(134, 182, 184, 0.2);
+          background: var(--secondary-dim);
+          color: var(--sea-grey, #7B9194);
+          border: 1px solid rgba(6, 64, 76, 0.25);
+          font-variant-numeric: tabular-nums;
         }
         .duration-box.break {
-          background: rgba(233, 80, 80, 0.1);
-          color: var(--danger);
-          border: 1px solid rgba(233, 80, 80, 0.2);
+          background: var(--primary-dim);
+          color: var(--muted);
+          border: 1px solid rgba(203, 13, 0, 0.15);
         }
         .duration-box.mini {
           font-size: 0.7rem;
@@ -304,11 +330,11 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
           height: 100%;
         }
         .timeline-chunk.work {
-          background: var(--primary);
+          background: var(--secondary, #06404C);
         }
         .timeline-chunk.break {
-          background: var(--danger);
-          opacity: 0.5;
+          background: var(--primary, #CB0D00);
+          opacity: 0.4;
         }
 
         /* Sub-rows */
@@ -336,25 +362,43 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
           gap: 4px;
         }
         .label-tag {
-          background: var(--glass-bg);
-          padding: 2px 8px;
-          border-radius: 4px;
-          font-size: 0.7rem;
-          display: flex;
+          background: var(--secondary-dim);
+          padding: 2px 7px;
+          border-radius: 3px;
+          font-size: 0.72rem;
+          font-weight: 600;
+          display: inline-flex;
           align-items: center;
-          gap: 4px;
-          color: var(--text-secondary);
-          border: 1px solid var(--glass-border);
+          gap: 3px;
+          color: var(--muted);
+          border: 1px solid rgba(6, 64, 76, 0.2);
+          white-space: nowrap;
+          max-width: 120px;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .label-tag.mini {
           border: none;
-          background: var(--glass-border);
+          background: var(--secondary-dim);
           font-size: 0.65rem;
+          max-width: 100px;
+        }
+        .label-overflow {
+          background: var(--primary-dim);
+          color: var(--primary);
+          padding: 2px 6px;
+          border-radius: 3px;
+          font-size: 0.7rem;
+          font-weight: 700;
+          border: 1px solid rgba(203, 13, 0, 0.2);
+          cursor: default;
+          white-space: nowrap;
         }
         .no-labels {
-          color: var(--text-secondary);
+          color: var(--muted);
           font-style: italic;
           font-size: 0.75rem;
+          opacity: 0.6;
         }
         .notes-cell {
           color: var(--text-secondary);

@@ -68,6 +68,7 @@ function App() {
   const [selectedIds, setSelectedIds] = useState([]);
   const [processing, setProcessing] = useState(false);
   const [bulkResults, setBulkResults] = useState(null);
+  const [bulkProgress, setBulkProgress] = useState(null);
 
   const [viewMode, setViewMode] = useState('daily'); // 'daily' or 'detailed'
 
@@ -221,15 +222,20 @@ function App() {
 
     if (targetIds.length === 0) return;
 
+    setBulkProgress({ current: 0, total: targetIds.length });
     setProcessing(true);
     try {
-      const results = await absenceApi.batchUpdateLabels(auth, targetIds, [labelId]);
+      const results = await absenceApi.batchUpdateLabels(auth, targetIds, [labelId], (current, total) => {
+          setBulkProgress({ current, total });
+      });
       setBulkResults(results);
+      setBulkProgress(null);
       await fetchData(); // Refresh table
     } catch (err) {
       alert('Batch update failed: ' + err.message);
     } finally {
       setProcessing(false);
+      setBulkProgress(null);
     }
   };
 
@@ -243,15 +249,20 @@ function App() {
 
     if (!confirm(`Are you sure you want to clear labels from ${targetIds.length} items?`)) return;
 
+    setBulkProgress({ current: 0, total: targetIds.length });
     setProcessing(true);
     try {
-      const results = await absenceApi.batchUpdateLabels(auth, targetIds, []);
+      const results = await absenceApi.batchUpdateLabels(auth, targetIds, [], (current, total) => {
+          setBulkProgress({ current, total });
+      });
       setBulkResults(results);
+      setBulkProgress(null);
       await fetchData(); // Refresh table
     } catch (err) {
       alert('Batch clear failed: ' + err.message);
     } finally {
       setProcessing(false);
+      setBulkProgress(null);
     }
   };
 
@@ -261,20 +272,23 @@ function App() {
 
   return (
     <div className="dashboard">
-      <header className="glass">
+      <header className="sea-header">
         <div className="header-left">
-          <LayoutDashboard className="primary-icon" />
-          <h1>Absence <span>Ops</span></h1>
+          <div className="sea-brand">
+            <span className="sea-mark">S E A . A I</span>
+            <span className="sea-divider" />
+            <span className="sea-product">Absence <strong>Ops</strong></span>
+          </div>
         </div>
         <div className="header-right">
           <ViewToggle viewMode={viewMode} setViewMode={setViewMode} />
           <ThemeToggle />
           <div className="api-status">
-            <Database size={16} />
+            <Database size={14} />
             Connected
           </div>
           <button className="secondary logout-btn" onClick={handleLogout}>
-            <LogOut size={16} />
+            <LogOut size={15} />
             Logout
           </button>
         </div>
@@ -310,6 +324,7 @@ function App() {
         onClear={handleBatchClear}
         processing={processing}
         results={bulkResults}
+        bulkProgress={bulkProgress}
       />
 
       <style dangerouslySetInnerHTML={{
@@ -320,108 +335,122 @@ function App() {
           padding: var(--spacing-md);
           display: flex;
           flex-direction: column;
-          gap: 16px;
+          gap: 12px;
           height: 100vh;
         }
-        header {
+
+        /* ── SEA.AI Header ── */
+        .sea-header {
           display: flex;
           justify-content: space-between;
           align-items: center;
-          padding: var(--spacing-sm) var(--spacing-md);
-          margin-bottom: 4px;
+          padding: 10px var(--spacing-md);
+          background: #0B1731;
+          border-radius: var(--radius-md);
+          border: none;
         }
-        .header-left {
+        .sea-brand {
           display: flex;
           align-items: center;
-          gap: var(--spacing-sm);
+          gap: 12px;
         }
-        .header-left h1 {
-          font-size: 1.25rem;
+        .sea-mark {
+          font-size: 0.75rem;
           font-weight: 700;
+          letter-spacing: 0.25em;
+          color: #CB0D00;
+          text-transform: uppercase;
         }
-        .header-left h1 span {
-          color: var(--primary);
+        .sea-divider {
+          width: 1px;
+          height: 18px;
+          background: rgba(123, 145, 148, 0.3);
         }
-        .primary-icon {
-          color: var(--primary);
+        .sea-product {
+          font-size: 1rem;
+          font-weight: 400;
+          color: rgba(255,255,255,0.7);
+          letter-spacing: 0.02em;
+        }
+        .sea-product strong {
+          color: #FFFFFF;
+          font-weight: 700;
         }
         .header-right {
           display: flex;
           align-items: center;
-          gap: var(--spacing-sm);
+          gap: 8px;
         }
         .api-status {
           display: flex;
           align-items: center;
           gap: 6px;
-          font-size: 0.85rem;
-          color: var(--accent);
-          background: rgba(34, 227, 146, 0.1);
-          padding: 6px 12px;
+          font-size: 0.8rem;
+          font-weight: 600;
+          color: #7B9194;
+          background: rgba(6, 64, 76, 0.35);
+          padding: 5px 12px;
           border-radius: 20px;
-          border: 1px solid rgba(34, 227, 146, 0.2);
+          border: 1px solid rgba(123, 145, 148, 0.2);
         }
+        .logout-btn {
+          background: rgba(255,255,255,0.06) !important;
+          border-color: rgba(255,255,255,0.1) !important;
+          color: rgba(255,255,255,0.7) !important;
+          font-size: 0.82rem;
+        }
+        .logout-btn:hover:not(:disabled) {
+          background: rgba(203, 13, 0, 0.15) !important;
+          border-color: rgba(203, 13, 0, 0.3) !important;
+          color: #CB0D00 !important;
+        }
+
         main {
           flex: 1;
           display: flex;
           flex-direction: column;
-          gap: 12px;
+          gap: 10px;
           overflow: hidden;
         }
         .main-controls {
-          display: flex;
-          flex-direction: column;
-          gap: var(--spacing-sm);
-        }
-        .view-toggle {
-          display: flex;
-          padding: 4px;
-          width: fit-content;
-        }
-        .view-toggle button {
-          padding: 8px 20px;
-          border-radius: var(--radius-sm);
-          font-size: 0.9rem;
-          background: transparent;
-          color: var(--text-secondary);
-        }
-        .view-toggle button.active {
-          background: var(--primary);
-          color: white;
-          box-shadow: var(--shadow);
-        }
-        .view-toggle button:hover:not(.active) {
-          background: var(--glass-border);
+          flex-shrink: 0;
         }
         .theme-toggle-btn {
-          padding: 8px;
-          border-radius: 12px;
+          padding: 7px !important;
+          border-radius: 8px !important;
+          background: rgba(255,255,255,0.06) !important;
+          border-color: rgba(255,255,255,0.1) !important;
+          color: rgba(255,255,255,0.6) !important;
+        }
+        .theme-toggle-btn:hover:not(:disabled) {
+          background: rgba(255,255,255,0.12) !important;
+          color: rgba(255,255,255,0.9) !important;
         }
         .discrete-view-toggle {
           display: flex;
-          background: var(--glass-border);
-          padding: 4px;
-          border-radius: 12px;
+          background: rgba(255,255,255,0.06);
+          padding: 3px;
+          border-radius: 8px;
           gap: 2px;
+          border: 1px solid rgba(255,255,255,0.1);
         }
         .view-btn {
-          padding: 6px;
-          border-radius: 8px;
+          padding: 5px 7px;
+          border-radius: 5px;
           background: transparent;
-          color: var(--text-secondary);
+          color: rgba(255,255,255,0.5);
           display: flex;
           align-items: center;
           justify-content: center;
           transition: var(--transition);
         }
         .view-btn:hover:not(.active) {
-          background: rgba(255,255,255,0.05);
-          color: var(--text-primary);
+          background: rgba(255,255,255,0.08);
+          color: rgba(255,255,255,0.8);
         }
         .view-btn.active {
-          background: var(--primary);
-          color: white;
-          box-shadow: var(--shadow);
+          background: #CB0D00;
+          color: #FFFFFF;
         }
       `}} />
     </div>
