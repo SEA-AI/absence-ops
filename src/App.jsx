@@ -9,6 +9,7 @@ import { StatsDashboard } from './components/StatsDashboard';
 import { LogOut, Sun, Moon, MoonStar, CalendarDays, List } from 'lucide-react';
 import { useTheme, THEMES } from './context/ThemeContext';
 import styles from './App.module.css';
+import { UNLABELED } from './constants';
 import logoWhite from './assets/logo-white.svg';
 import logoBlack from './assets/logo-black.jpg';
 
@@ -74,14 +75,54 @@ function App() {
   const [bulkProgress, setBulkProgress] = useState(null);
 
   const [viewMode, setViewMode] = useState('daily');
+  const [labelFilter, setLabelFilter] = useState([]);
 
   const [dateRange, setDateRange] = useState({
     start: format(startOfMonth(new Date()), 'yyyy-MM-dd'),
     end: format(endOfMonth(new Date()), 'yyyy-MM-dd')
   });
 
+  const filteredEvents = useMemo(() => {
+    if (labelFilter.length === 0) return events;
+    const wanted = new Set(labelFilter);
+    return events.filter(e => {
+      if (e.type !== 'work') return false;
+      const ids = e.labelIds || [];
+      if (ids.length === 0) return wanted.has(UNLABELED);
+      return ids.some(id => wanted.has(id));
+    });
+  }, [events, labelFilter]);
+
+  const labelOptions = useMemo(() => {
+    const counts = {};
+    events.filter(e => e.type === 'work').forEach(e => {
+      const ids = e.labelIds && e.labelIds.length > 0 ? e.labelIds : [UNLABELED];
+      ids.forEach(id => { counts[id] = (counts[id] || 0) + 1; });
+    });
+    labelFilter.forEach(id => { counts[id] = counts[id] || 0; });
+
+    const nameOf = (id) => {
+      if (id === UNLABELED) return 'Unlabeled';
+      const label = labels.find(l => l._id === id);
+      return label ? label.name : id;
+    };
+
+    return Object.entries(counts)
+      .map(([id, count]) => ({ id, count, name: nameOf(id) }))
+      .sort((a, b) => {
+        if (a.id === UNLABELED) return 1;
+        if (b.id === UNLABELED) return -1;
+        return b.count - a.count || a.name.localeCompare(b.name);
+      });
+  }, [events, labels, labelFilter]);
+
+  const handleLabelFilterChange = useCallback((next) => {
+    setLabelFilter(next);
+    setSelectedIds([]);
+  }, []);
+
   const processedEvents = useMemo(() => {
-    const enhanced = events.map(e => ({
+    const enhanced = filteredEvents.map(e => ({
       ...e,
       calcDuration: e.end ? (new Date(e.end) - new Date(e.start)) / 1000 : 0
     }));
@@ -120,10 +161,10 @@ function App() {
       ...g,
       labelIds: Array.from(g.labelIds)
     })).sort((a, b) => new Date(b.start) - new Date(a.start));
-  }, [events, viewMode]);
+  }, [filteredEvents, viewMode]);
 
   const stats = useMemo(() => {
-    const workEvents = events.filter(e => e.type === 'work');
+    const workEvents = filteredEvents.filter(e => e.type === 'work');
     const totalDuration = workEvents.reduce((sum, e) => {
       const dur = e.end ? (new Date(e.end) - new Date(e.start)) / 1000 : 0;
       return sum + dur;
@@ -135,7 +176,7 @@ function App() {
       if (e.labelIds && e.labelIds.length > 0) {
         e.labelIds.forEach(id => { labelMap[id] = (labelMap[id] || 0) + dur; });
       } else {
-        labelMap['unlabeled'] = (labelMap['unlabeled'] || 0) + dur;
+        labelMap[UNLABELED] = (labelMap[UNLABELED] || 0) + dur;
       }
     });
 
@@ -145,11 +186,11 @@ function App() {
       percentage: totalDuration > 0 ? (duration / totalDuration) * 100 : 0
     })).sort((a, b) => b.duration - a.duration);
 
-    const uniqueDays = new Set(events.map(e => format(new Date(e.start), 'yyyy-MM-dd'))).size;
+    const uniqueDays = new Set(filteredEvents.map(e => format(new Date(e.start), 'yyyy-MM-dd'))).size;
     const dailyAverage = uniqueDays > 0 ? totalDuration / uniqueDays : 0;
 
     return { totalDuration, labelBreakdown, dailyAverage, uniqueDays };
-  }, [events]);
+  }, [filteredEvents]);
 
   const selectedTotalDuration = useMemo(() => {
     return processedEvents
@@ -297,7 +338,12 @@ function App() {
           />
         </div>
 
-        <StatsDashboard stats={stats} labels={labels} />
+        <StatsDashboard
+          stats={stats}
+          labels={labels}
+          filteredLabelCount={labelFilter.length}
+          onClearLabelFilter={() => handleLabelFilterChange([])}
+        />
 
         <EventTable
           events={processedEvents}
@@ -305,6 +351,9 @@ function App() {
           onToggleSelect={setSelectedIds}
           labels={labels}
           viewMode={viewMode}
+          labelOptions={labelOptions}
+          labelFilter={labelFilter}
+          onLabelFilterChange={handleLabelFilterChange}
         />
       </main>
 

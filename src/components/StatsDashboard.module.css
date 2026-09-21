@@ -111,3 +111,18 @@
     mask-image: linear-gradient(to right, black 80%, transparent 100%);
   }
 }
+
+.filterPill {
+  height: 22px;
+  padding: 0 7px;
+  gap: 5px;
+  border-radius: var(--radius-s);
+  background: var(--surface-primary-3);
+  color: #FFFFFF;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.filterPill:hover { filter: brightness(1.12); }
+.filterPillX { opacity: 0.75; }

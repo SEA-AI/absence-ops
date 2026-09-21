@@ -84,6 +84,13 @@ async function run(browser, { theme='DARK', events=EVENTS, viewport={width:1400,
     await p.locator('tbody button').first().click(); await sleep(300);
     await p.screenshot({ path:'screenshots/app-07-expanded.png' }); console.log('✓ expanded'); }});
 
+  await run(browser, { theme:'DARK', fn: async p => {
+    await p.locator('thead button').first().click(); await sleep(300);
+    await p.screenshot({ path:'screenshots/app-09-label-filter.png' }); console.log('✓ label-filter');
+    await p.locator('[role="option"]').first().click(); await sleep(200);
+    await p.keyboard.press('Escape'); await sleep(300);
+    await p.screenshot({ path:'screenshots/app-10-label-filter-applied.png' }); console.log('✓ label-filter-applied'); }});
+
   await run(browser, { theme:'DARK', viewport:{width:390,height:844}, fn: async p => {
     await p.screenshot({ path:'screenshots/app-08-mobile.png', fullPage:true }); console.log('✓ mobile'); }});
 
