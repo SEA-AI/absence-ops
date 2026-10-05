@@ -1,8 +1,9 @@
 import React from 'react';
-import { Clock } from 'lucide-react';
+import { Clock, ListFilter, X } from 'lucide-react';
+import { UNLABELED } from '../constants';
 import styles from './StatsDashboard.module.css';
 
-export function StatsDashboard({ stats, labels }) {
+export function StatsDashboard({ stats, labels, filteredLabelCount = 0, onClearLabelFilter }) {
   const formatDuration = (seconds) => {
     const h = Math.floor(seconds / 3600);
     const m = Math.round((seconds % 3600) / 60);
@@ -11,7 +12,7 @@ export function StatsDashboard({ stats, labels }) {
   };
 
   const getLabelName = (id) => {
-    if (id === 'unlabeled') return 'Unlabeled';
+    if (id === UNLABELED) return 'Unlabeled';
     const label = labels.find(l => l._id === id);
     return label ? label.name : id;
   };
@@ -23,6 +24,18 @@ export function StatsDashboard({ stats, labels }) {
         <span className={styles.statLabelText}>TOTAL</span>
         <span className={styles.statValueMain}>{formatDuration(stats.totalDuration)}</span>
         <span className={styles.statDays}>{stats.uniqueDays}d</span>
+        {filteredLabelCount > 0 && (
+          <button
+            type="button"
+            className={styles.filterPill}
+            onClick={onClearLabelFilter}
+            title="Clear label filter"
+          >
+            <ListFilter size={11} />
+            {filteredLabelCount} label{filteredLabelCount > 1 ? 's' : ''}
+            <X size={11} className={styles.filterPillX} />
+          </button>
+        )}
       </div>
 
       {stats.labelBreakdown.length > 0 && (

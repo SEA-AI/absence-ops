@@ -7,6 +7,7 @@
 ### Key Features
 - **Batch Labels**: Group-apply or clear labels from timespans in a few clicks.
 - **Insightful Stats**: Real-time breakdown of your work hours by label.
+- **Label Filter**: Filter the table from the Labels column header to see one project's days, hours and stats.
 - **Unified View**: Aggregates fragmented work blocks into a clean daily summary.
 - **Privacy Core**: Credentials stay in your local storage; no server-side tracking.
 

@@ -1,11 +1,21 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { Clock, Tag as TagIcon, ChevronRight } from 'lucide-react';
+import { LabelFilter } from './LabelFilter';
 import styles from './EventTable.module.css';
 
 const MAX_VISIBLE_LABELS = 3;
 
-export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMode }) {
+export function EventTable({
+  events,
+  selectedIds,
+  onToggleSelect,
+  labels,
+  viewMode,
+  labelOptions = [],
+  labelFilter = [],
+  onLabelFilterChange,
+}) {
   const [expandedRows, setExpandedRows] = React.useState([]);
 
   const getLabelName = (id) => {
@@ -70,11 +80,22 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
     setLastSelectedIndex(index);
   };
 
+  const filterActive = labelFilter.length > 0;
+
   if (events.length === 0) {
     return (
       <div className={styles.emptyState}>
         <Clock size={40} strokeWidth={1.5} />
-        <p>No time-tracked events for the selected period.</p>
+        {filterActive ? (
+          <>
+            <p>No time-tracked events match the selected labels.</p>
+            <button className="secondary sm" onClick={() => onLabelFilterChange?.([])}>
+              Clear label filter
+            </button>
+          </>
+        ) : (
+          <p>No time-tracked events for the selected period.</p>
+        )}
       </div>
     );
   }
@@ -102,7 +123,16 @@ export function EventTable({ events, selectedIds, onToggleSelect, labels, viewMo
             <th>{viewMode === 'daily' ? 'Date' : 'Time'}</th>
             <th>Work Duration</th>
             {viewMode === 'daily' && <th>Distribution</th>}
-            <th>Labels</th>
+            <th className={styles.labelsHeader}>
+              <span className={styles.headerLabel}>Labels</span>
+              {onLabelFilterChange && (
+                <LabelFilter
+                  options={labelOptions}
+                  value={labelFilter}
+                  onChange={onLabelFilterChange}
+                />
+              )}
+            </th>
             <th>Notes</th>
           </tr>
         </thead>

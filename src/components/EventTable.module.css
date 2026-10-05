@@ -166,3 +166,6 @@
   border-radius: var(--radius-m);
   background: var(--surface-neutral-3);
 }
+
+.labelsHeader { white-space: nowrap; }
+.headerLabel { vertical-align: middle; }
